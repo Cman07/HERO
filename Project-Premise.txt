@@ -1,0 +1,18 @@
+After a significant hurricane, wildfire, flood, or other emergency, citizens must quickly determine what assistance is available, whether they may qualify, what information or documents they need, and where to apply. At the same time, contact centers can be overwhelmed, qualified staff and volunteers may be limited, and citizens may face long waits while navigating fragmented government websites, forms, eligibility requirements, and service portals. These challenges are more severe for people who speak different languages, have accessibility needs, lack reliable connectivity, have lost identification or devices, or need urgent help.
+
+Build an AI disaster assistance navigator that gives citizens a better experience than waiting on hold or navigating a traditional FAQ or phone menu. Your solution should help people discover relevant services based on their location, circumstances, and immediate needs. The experience should be grounded in authoritative government information and explain recommendations in plain language. Consider how to minimize the collection of sensitive information, warn users about disaster-related fraud, and escalate sensitive, ambiguous, urgent, or high-impact cases to a human representative.
+
+Resources: 
+https://www.disasterassistance.gov/
+https://www.fema.gov/about/openfema/data-sets
+https://www.fema.gov/about/openfema/api
+https://github.com/FEMA/openfema-samples
+https://www.fema.gov/assistance/individual/disaster-fraud
+https://egateway.fema.gov/ESF6/DRCLocator
+https://learn.microsoft.com/en-us/azure/foundry/
+https://learn.microsoft.com/en-us/azure/ai-services/speech-service/voice-live
+https://inclusive.microsoft.design/
+https://www.microsoft.com/en-us/trust-center/compliance/accessibility?msockid=25ddb871a50d6c4b02b7afdaa4236d5c
+https://www.microsoft.com/en-us/ai/tools-practices
+https://learn.microsoft.com/en-us/azure/ai-services/translator/
+https://learn.microsoft.com/en-us/fabric/
