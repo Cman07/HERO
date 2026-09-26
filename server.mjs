@@ -7,6 +7,7 @@ import { randomBytes } from 'node:crypto';
 import schema from './profile.cjs';
 import { openProfileDatabase } from './profile-db.mjs';
 import { openAccountDatabase, AccountError } from './auth-db.mjs';
+import { verifyGoogleCredential } from './google-auth.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const staticFiles = new Map([
@@ -61,19 +62,19 @@ function sessionToken(req, name = 'hero_profile') {
   const value = (req.headers.cookie || '').split(';').map(part => part.trim()).find(part => part.startsWith(name + '='))?.slice(name.length + 1);
   return /^[a-f0-9]{64}$/.test(value || '') ? value : null;
 }
-function sameOrigin(req) {
+function sameOrigin(req, env = {}) {
   if (!req.headers.origin) return true;
-  try { return new URL(req.headers.origin).host === req.headers.host; } catch { return false; }
+  try { return env.HERO_ORIGIN ? new URL(req.headers.origin).origin === new URL(env.HERO_ORIGIN).origin : new URL(req.headers.origin).host === req.headers.host; } catch { return false; }
 }
 function profileCookie(token, env) {
-  return `hero_profile=${token || ''}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token ? 31536000 : 0}${env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+  return `hero_profile=${token || ''}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token ? 31536000 : 0}${(env.NODE_ENV === 'production' || env.HERO_ORIGIN?.startsWith('https://')) ? '; Secure' : ''}`;
 }
 
 function accountCookie(token, env) {
-  return `hero_session=${token || ''}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token ? 604800 : 0}${env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+  return `hero_session=${token || ''}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token ? 604800 : 0}${(env.NODE_ENV === 'production' || env.HERO_ORIGIN?.startsWith('https://')) ? '; Secure' : ''}`;
 }
 
-export function createAppServer({ env = process.env, fetchImpl = fetch, profileStore = null, accountStore = null } = {}) {
+export function createAppServer({ env = process.env, fetchImpl = fetch, profileStore = null, accountStore = null, googleVerifier = verifyGoogleCredential } = {}) {
   const endpoint = env.AZURE_OPENAI_ENDPOINT;
   const deployment = env.AZURE_OPENAI_DEPLOYMENT;
   const apiKey = env.AZURE_OPENAI_API_KEY;
@@ -112,16 +113,28 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
     if (path.startsWith('/api/account')) {
       if (!accountStore) { sendJson(res, 503, { error: 'Accounts are unavailable right now. You can still find help.' }); return; }
       try {
-        if (path === '/api/account' && req.method === 'GET') {
+        if (path === '/api/account/google/config' && req.method === 'GET') {
+          if (!sameOrigin(req, env) || req.headers['x-hero-account'] !== '1') { sendJson(res, 403, { error: 'Request not allowed.' }); return; }
           const { user } = identity(req);
+          const clientId = env.GOOGLE_CLIENT_ID;
+          if (!clientId || !/^[A-Za-z0-9_-]+\.apps\.googleusercontent\.com$/.test(clientId)) {
+            sendJson(res, 200, { enabled: false }); return;
+          }
+          const nonce = accountStore.googleChallenge(user?.profileToken || null);
+          res.setHeader('Set-Cookie', `hero_google=${nonce}; HttpOnly; SameSite=Strict; Path=/api/account/google; Max-Age=600${(env.NODE_ENV === 'production' || env.HERO_ORIGIN?.startsWith('https://')) ? '; Secure' : ''}`);
+          sendJson(res, 200, { enabled: true, clientId, nonce, linking: Boolean(user), linkedEmail: user ? accountStore.googleDetails(user.profileToken) : null }); return;
+        }
+        if (path === '/api/account' && req.method === 'GET') {
+          const { user, token } = identity(req);
+          if (token && !user) res.setHeader('Set-Cookie', accountCookie(null, env));
           const browserToken = sessionToken(req);
           const hasBrowserProfile = Boolean(user && profileStore && browserToken && profileStore.get(browserToken) && !profileStore.get(user.profileToken));
           sendJson(res, 200, { user: user ? { username: user.username } : null, hasBrowserProfile }); return;
         }
-        if (req.method !== 'POST' || !['/api/account/register', '/api/account/login', '/api/account/logout'].includes(path)) {
+        if (req.method !== 'POST' || !['/api/account/register', '/api/account/login', '/api/account/logout', '/api/account/google'].includes(path)) {
           sendJson(res, 404, { error: 'Not found.' }); return;
         }
-        if (!sameOrigin(req) || req.headers['x-hero-account'] !== '1') { sendJson(res, 403, { error: 'Request not allowed.' }); return; }
+        if (!sameOrigin(req, env) || req.headers['x-hero-account'] !== '1') { sendJson(res, 403, { error: 'Request not allowed.' }); return; }
         const oldToken = sessionToken(req, 'hero_session');
         if (path === '/api/account/logout') {
           accountStore.logout(oldToken);
@@ -137,7 +150,23 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
         recent.push(time); accountAttempts.set(address, recent);
         let body;
         try { body = await readJson(req); } catch (error) { sendJson(res, 400, { error: error.message }); return; }
-        const result = await accountStore[path.endsWith('/register') ? 'register' : 'login'](body);
+        let result;
+        if (path === '/api/account/google') {
+          if (!env.GOOGLE_CLIENT_ID) { sendJson(res, 503, { error: 'Google sign-in has not been configured yet. Use username and password.' }); return; }
+          const { user, token } = identity(req);
+          if (token && !user) { sendJson(res, 401, { error: 'Your session expired. Sign out and reload before using Google.' }); return; }
+          const nonce = sessionToken(req, 'hero_google');
+          if (body?.nonce !== nonce || !nonce || typeof body.credential !== 'string' || body.credential.length > 12000) {
+            sendJson(res, 403, { error: 'Reload the account page and try Google again.' }); return;
+          }
+          accountStore.consumeGoogleChallenge(nonce, user?.profileToken || null);
+          const verified = await googleVerifier(body.credential, env.GOOGLE_CLIENT_ID, nonce);
+          // Linking is bound to the original session, even while token verification awaits Google's keys.
+          if (user && accountStore.userForSession(token)?.profileToken !== user.profileToken) throw new AccountError('Your session changed. Reload before linking Google.', 401);
+          result = accountStore.googleSignIn(verified, user?.profileToken || null);
+        } else {
+          result = await accountStore[path.endsWith('/register') ? 'register' : 'login'](body);
+        }
         accountStore.logout(oldToken);
         res.setHeader('Set-Cookie', accountCookie(result.token, env));
         sendJson(res, path.endsWith('/register') ? 201 : 200, { user: result.user });
@@ -147,7 +176,7 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
       return;
     }
     if (path === '/api/profile/import' && req.method === 'POST') {
-      if (!sameOrigin(req) || req.headers['x-hero-profile'] !== '1') { sendJson(res, 403, { error: 'Request not allowed.' }); return; }
+      if (!sameOrigin(req, env) || req.headers['x-hero-profile'] !== '1') { sendJson(res, 403, { error: 'Request not allowed.' }); return; }
       if (!req.headers['content-type']?.startsWith('application/json')) { sendJson(res, 415, { error: 'Send JSON.' }); return; }
       try {
         if ((await readJson(req))?.consent !== true) { sendJson(res, 400, { error: 'Agree to move this browser profile into your account first.' }); return; }
@@ -169,7 +198,7 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
     }
     if (path === '/api/profile' && ['GET', 'PUT', 'DELETE'].includes(req.method)) {
       if (!profileStore) { sendJson(res, 503, { error: 'Profile storage is unavailable. You can still find help.' }); return; }
-      if (!sameOrigin(req) || (req.method !== 'GET' && req.headers['x-hero-profile'] !== '1')) {
+      if (!sameOrigin(req, env) || (req.method !== 'GET' && req.headers['x-hero-profile'] !== '1')) {
         sendJson(res, 403, { error: 'Request not allowed.' }); return;
       }
       try {

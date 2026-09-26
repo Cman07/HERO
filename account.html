@@ -26,8 +26,13 @@
         <p class="eyebrow">Optional account</p>
         <h1 id="account-title">Your household profile</h1>
         <p class="lead">Sign in to save your profile and return to it from another browser using this site.</p>
-        <p class="quiet-note">This local account needs only a username and password. No email or health information is needed to create it. Password recovery is not available yet.</p>
+        <p class="quiet-note">Use Google or a local username and password. Your household answers stay in encrypted storage on this HERO computer. Password recovery is not available yet.</p>
         <p id="account-status" role="status" aria-live="polite">Checking your sign-in…</p>
+        <section class="quiet-note" aria-labelledby="google-title">
+          <h2 id="google-title">Continue with Google</h2>
+          <p id="google-note" role="status">Checking Google sign-in…</p>
+          <div id="google-button"></div>
+        </section>
         <div id="signed-out" hidden>
           <div class="account-tabs" aria-label="Choose an account action">
             <button class="secondary-button" id="login-mode" type="button" aria-pressed="true">Sign in</button>

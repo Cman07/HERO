@@ -2,6 +2,8 @@
   let mode = 'login';
   let busy = false;
   let user = null;
+  let googleConfig = null;
+  let googleScript = null;
   const status = document.getElementById('account-status');
   const password = document.getElementById('account-password');
   const confirmation = document.getElementById('account-confirm');
@@ -47,7 +49,37 @@
     confirmation.setCustomValidity('');
     document.querySelector('.profile-footer-actions a').textContent = user ? 'Back to Plan ahead' : 'Continue without an account';
   }
-  async function load() { const data = await request('/api/account'); render(data); return data; }
+  async function load() { const data = await request('/api/account'); render(data); await loadGoogle(); return data; }
+  async function loadGoogle() {
+    const note = document.getElementById('google-note');
+    const container = document.getElementById('google-button');
+    container.replaceChildren();
+    try {
+      googleConfig = await request('/api/account/google/config');
+      document.getElementById('google-title').textContent = user ? 'Link your Google account' : 'Continue with Google';
+      if (!googleConfig.enabled) { note.textContent = 'Google sign-in is not configured yet. Username/password sign-in is available below.'; return; }
+      if (googleConfig.linkedEmail) { note.textContent = 'Google account linked: ' + googleConfig.linkedEmail + '. Either sign-in method opens this same profile if you created a password account.'; return; }
+      note.textContent = user ? 'Choose Google to link it to this HERO account. Your existing profile will stay with this account.' : 'Choose your Google account to sign in or create a HERO account. Sign in from any device to access your saved profile on this site.';
+      if (!googleScript) googleScript = new Promise((resolve, reject) => {
+        const script = document.createElement('script'); script.src = 'https://accounts.google.com/gsi/client'; script.async = true;
+        script.onload = resolve; script.onerror = () => reject(new Error('Google could not be loaded.'));
+        document.head.append(script);
+      });
+      await googleScript;
+      window.google.accounts.id.initialize({ client_id: googleConfig.clientId, nonce: googleConfig.nonce,
+        auto_select: false, callback: async response => {
+          if (busy) return;
+          const nonce = googleConfig.nonce;
+          setBusy(true); report(user ? 'Linking Google…' : 'Signing in with Google…');
+          try {
+            await request('/api/account/google', { credential: response.credential, nonce });
+            await load(); report('Google is connected. Open Plan ahead to review your profile.');
+          } catch (error) { report(error.message, true); await loadGoogle(); }
+          finally { setBusy(false); }
+        } });
+      window.google.accounts.id.renderButton(container, { theme: 'outline', size: 'large', text: 'continue_with' });
+    } catch { googleScript = null; note.textContent = 'Google sign-in is unavailable right now. You can still use username and password.'; }
+  }
   document.getElementById('login-mode').addEventListener('click', () => changeMode('login'));
   document.getElementById('register-mode').addEventListener('click', () => changeMode('register'));
   confirmation.addEventListener('input', () => confirmation.setCustomValidity(''));
@@ -70,7 +102,7 @@
   document.getElementById('account-logout').addEventListener('click', async () => {
     if (busy) return;
     setBusy(true); report('Signing out…');
-    try { await request('/api/account/logout', {}); render({ user: null }); report('You are signed out. Your account profile is still saved for your next sign-in.'); }
+    try { await request('/api/account/logout', {}); render({ user: null }); window.google?.accounts.id.disableAutoSelect(); await loadGoogle(); report('You are signed out. Your account profile is still saved for your next sign-in.'); }
     catch (error) { report(error.message, true); }
     finally { setBusy(false); }
   });

@@ -4,6 +4,10 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test"
+    "test": "node --test",
+    "start:private": "node private-server.mjs"
+  },
+  "dependencies": {
+    "google-auth-library": "^11.1.0"
   }
 }

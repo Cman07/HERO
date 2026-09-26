@@ -5,3 +5,5 @@
 *.sqlite
 *.sqlite-*
 profile.key
+
+node_modules/

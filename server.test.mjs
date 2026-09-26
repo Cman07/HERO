@@ -252,3 +252,65 @@ test('moving a browser profile requires consent and never overwrites another acc
     });
   } finally { profiles.close(); accounts.close(); }
 });
+
+test('Google sign-in and explicit linking preserve profiles and reject replay, wrong origin and conflicts', async () => {
+  const { randomBytes } = await import('node:crypto');
+  const { createAccountDatabase } = await import('./auth-db.mjs');
+  const { createProfileDatabase } = await import('./profile-db.mjs');
+  const accounts = createAccountDatabase(':memory:');
+  const profiles = createProfileDatabase(':memory:', randomBytes(32));
+  const clientId = 'hero-test.apps.googleusercontent.com';
+  let verified = 0;
+  try {
+    await withServer({ env: { GOOGLE_CLIENT_ID: clientId, HERO_ORIGIN: 'https://hero.example.ts.net' }, accountStore: accounts, profileStore: profiles,
+      googleVerifier: async (credential, audience, nonce) => {
+        verified++; assert.equal(audience, clientId); assert.match(nonce, /^[a-f0-9]{64}$/);
+        if (credential === 'invalid') throw new Error('private verification details');
+        return { sub: credential, email: 'same@example.test' };
+      }
+    }, async base => {
+      const headers = { 'Content-Type': 'application/json', 'X-HERO-Account': '1', Origin: 'https://hero.example.ts.net' };
+      const post = (path, body, cookie = '', extra = {}) => fetch(base + path, { method: 'POST', headers: { ...headers, Cookie: cookie, ...extra }, body: JSON.stringify(body) });
+      const challenge = async (cookie = '') => {
+        const response = await fetch(base + '/api/account/google/config', { headers: { ...headers, Cookie: cookie } });
+        assert.equal(response.status, 200);
+        assert.match(response.headers.get('set-cookie'), /HttpOnly; SameSite=Strict;.*Secure/);
+        return { data: await response.json(), cookie: [cookie, response.headers.get('set-cookie').split(';')[0]].filter(Boolean).join('; ') };
+      };
+      const read = async cookie => (await fetch(base + '/api/profile', { headers: { Cookie: cookie } })).json();
+      const registered = await post('/api/account/register', { username: 'local-google-user', password: 'a-long-test-password' });
+      const localCookie = registered.headers.get('set-cookie').split(';')[0];
+      const localOwner = accounts.userForSession(localCookie.split('=')[1]).profileToken;
+      profiles.save(localOwner, { homeLocality: 'Fairfax city', householdSize: '3', ...Object.fromEntries((await import('./profile.cjs')).default.profileQuestions.map(({ key }) => [key, 'unspecified'])) });
+      const link = await challenge(localCookie);
+      assert.equal(link.data.linking, true);
+      const linked = await post('/api/account/google', { credential: 'subject-a', nonce: link.data.nonce }, link.cookie);
+      assert.equal(linked.status, 200);
+      const linkedCookie = linked.headers.get('set-cookie').split(';')[0];
+      assert.equal((await read(linkedCookie)).profile.homeLocality, 'Fairfax city');
+      assert.equal((await read(localCookie)).profile, null, 'Linking rotates the session');
+      assert.equal((await post('/api/account/google', { credential: 'subject-a', nonce: link.data.nonce }, link.cookie)).status, 401);
+      const login = await challenge();
+      assert.equal((await post('/api/account/google', { credential: 'subject-a', nonce: login.data.nonce }, login.cookie, { Origin: 'https://evil.example' })).status, 403);
+      const loggedIn = await post('/api/account/google', { credential: 'subject-a', nonce: login.data.nonce }, login.cookie);
+      assert.equal(loggedIn.status, 200);
+      const googleCookie = loggedIn.headers.get('set-cookie').split(';')[0];
+      assert.equal((await read(googleCookie)).profile.homeLocality, 'Fairfax city');
+      assert.equal((await post('/api/account/google', { credential: 'subject-a', nonce: login.data.nonce }, login.cookie)).status, 403, 'Challenge cannot be replayed');
+      const other = await challenge();
+      const otherLogin = await post('/api/account/google', { credential: 'subject-b', nonce: other.data.nonce }, other.cookie);
+      assert.equal(otherLogin.status, 200);
+      const otherCookie = otherLogin.headers.get('set-cookie').split(';')[0];
+      assert.equal((await read(otherCookie)).profile, null, 'Identical emails never merge profiles');
+      const conflict = await challenge(otherCookie);
+      assert.equal((await post('/api/account/google', { credential: 'subject-a', nonce: conflict.data.nonce }, conflict.cookie)).status, 409);
+      const changed = await challenge(googleCookie);
+      assert.equal((await post('/api/account/google', { credential: 'subject-c', nonce: changed.data.nonce }, changed.cookie.replace(googleCookie, otherCookie))).status, 403);
+      const invalid = await challenge();
+      const rejected = await post('/api/account/google', { credential: 'invalid', nonce: invalid.data.nonce }, invalid.cookie);
+      assert.equal(rejected.status, 500); assert.doesNotMatch(JSON.stringify(await rejected.json()), /private verification/);
+      assert.equal(verified, 5);
+      assert.equal((await fetch(base + '/google-auth.mjs')).status, 404);
+    });
+  } finally { accounts.close(); profiles.close(); }
+});

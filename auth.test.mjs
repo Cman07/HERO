@@ -42,3 +42,46 @@ test('sessions expire after inactivity and credential validation rejects invalid
     assert.equal(store.userForSession(session.token), null);
   } finally { store.close(); }
 });
+
+test('Google identities use stable subjects, link explicitly, and cannot take over another profile', async () => {
+  const store = createAccountDatabase(':memory:');
+  try {
+    const local = await store.register(credentials);
+    const owner = store.userForSession(local.token).profileToken;
+    const google = { sub: 'google-subject-a', email: 'resident@example.test' };
+    const linked = store.googleSignIn(google, owner);
+    assert.equal(store.userForSession(linked.token).profileToken, owner);
+    assert.equal(store.googleDetails(owner), google.email);
+    const returning = store.googleSignIn({ ...google, email: 'changed@example.test' });
+    assert.equal(store.userForSession(returning.token).profileToken, owner);
+    assert.equal(store.userForSession((await store.login(credentials)).token).profileToken, owner);
+    const separate = store.googleSignIn({ sub: 'google-subject-b', email: 'changed@example.test' });
+    const otherOwner = store.userForSession(separate.token).profileToken;
+    assert.notEqual(otherOwner, owner, 'Matching emails never merge accounts');
+    assert.throws(() => store.googleSignIn(google, otherOwner), /another HERO account/);
+    assert.throws(() => store.googleSignIn({ sub: 'third', email: 'third@example.test' }, owner), /different Google account/);
+    const nonce = store.googleChallenge(owner);
+    store.consumeGoogleChallenge(nonce, owner);
+    assert.throws(() => store.consumeGoogleChallenge(nonce, owner), /expired/);
+    assert.throws(() => store.consumeGoogleChallenge(store.googleChallenge(owner), otherOwner), /changed/);
+  } finally { store.close(); }
+});
+
+test('existing account schema migrates without changing credentials or profile owners', async () => {
+  const { DatabaseSync } = await import('node:sqlite');
+  const directory = mkdtempSync(join(tmpdir(), 'hero-google-migrate-'));
+  const path = join(directory, 'accounts.sqlite');
+  let store;
+  try {
+    const old = new DatabaseSync(path);
+    old.exec('CREATE TABLE accounts (id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE, salt BLOB NOT NULL, password_hash BLOB NOT NULL, profile_token TEXT NOT NULL UNIQUE) STRICT');
+    old.close();
+    store = createAccountDatabase(path);
+    const session = await store.register(credentials);
+    const owner = store.userForSession(session.token).profileToken;
+    store.googleSignIn({ sub: 'migrate-google', email: 'test@example.test' }, owner);
+    store.close(); store = createAccountDatabase(path);
+    assert.equal(store.userForSession((await store.login(credentials)).token).profileToken, owner);
+    assert.equal(store.userForSession(store.googleSignIn({ sub: 'migrate-google', email: 'test@example.test' }).token).profileToken, owner);
+  } finally { store?.close(); rmSync(directory, { recursive: true, force: true }); }
+});
