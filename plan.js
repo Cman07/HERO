@@ -111,10 +111,12 @@
     let value;
     try { value = schema.normalizeProfile(draft(), localities); }
     catch (error) { report(error.message, true); return; }
+    document.getElementById('return-home').hidden = true;
     setBusy(true); report('Saving your profile…');
     try {
       saved = (await request('PUT', value)).profile; renderSaved();
-      report('Your household profile is saved to ' + (user ? 'your account' : 'this browser') + '. You can update it here or choose Find help now.');
+      document.getElementById('return-home').hidden = false;
+      report('Your household profile is saved to ' + (user ? 'your account' : 'this browser') + '. You can update it here or return to the main page.');
     } catch (error) { report(error instanceof TypeError ? 'Could not reach profile storage. Your answers are still on this page; please try again.' : error.message, true); }
     finally { setBusy(false); }
   });
