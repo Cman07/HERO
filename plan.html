@@ -3,28 +3,41 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#103b61" />
+    <meta name="theme-color" content="#0a3922" />
     <meta name="description" content="Create an optional household profile for the Virginia Flood Guide." />
     <title>Plan ahead — Virginia Flood Guide</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b61'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23b4edf1' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a3922'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23d2f2e3' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <script src="./language.cjs"></script>
+    <script src="./accessibility.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to main content</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <div class="brand">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 11c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 17c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="#b4edf1" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <span>Virginia Flood Guide</span>
-        </div>
-        <div class="header-links"><span class="scope">Virginia · Flooding</span><a id="account-nav" href="./account.html">Sign in</a></div>
+        <a class="brand" href="./index.html" aria-label="Virginia Flood Guide home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 9c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 16c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <span>Virginia<br class="brand-break" /> Flood Guide</span>
+        </a>
+        <nav class="header-links" aria-label="Main navigation">
+          <a href="./index.html">Home</a>
+          <a href="./index.html#help" data-start-help>Find help now</a>
+          <a href="./plan.html" aria-current="page">Plan ahead</a>
+          <a class="nav-account" id="account-nav" href="./account.html">Sign in</a>
+        </nav>
       </div>
     </header>
-    <main id="main" class="plan-main">
+    <section class="access-controls" aria-label="Language settings">
+      <div class="access-controls-inner">
+        <label for="language-choice">Language / Idioma <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></label>
+      </div>
+      <p class="connection-notice" id="connection-notice" role="status" hidden>Connection unavailable: the public guide is available. Accounts, saved profiles, chat, FEMA checks and external sites need a connection. Nothing is queued for automatic sending.</p>
+    </section><noscript><p class="connection-notice">JavaScript is off. You can use the official resources below. Questionnaire, account and profile controls need JavaScript.</p><p lang="es">JavaScript está desactivado. Puede usar los recursos oficiales. Si está en peligro inmediato o tiene lesiones graves, <a href="tel:911">llame al 911</a>.</p><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> · <a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a></noscript>
+    <main tabindex="-1" id="main" class="plan-main">
       <a class="back-link" href="./index.html">← Back to flood guide</a>
       <div class="intro plan-intro">
-        <p class="eyebrow">Before an emergency</p>
-        <h1>Your household, your plan.</h1>
+        <p class="eyebrow">A little preparation, more peace of mind</p>
+        <h1>Your household.<br /><span>Your plan.</span></h1>
         <p class="lead">Take a few minutes to record what your household may need. Every question is optional. You can find help without a profile.</p>
       </div>
       <section class="question-flow profile-card" aria-labelledby="profile-title">
@@ -36,10 +49,12 @@
           <section class="profile-panel" data-panel="0" aria-labelledby="profile-title">
             <h2 id="profile-title" tabindex="-1">Where do you call home?</h2>
             <p class="panel-description">Your home locality helps you prepare. When finding help, you’ll confirm where you are now separately.</p>
-            <label class="location-field" for="home-search">Search counties and independent cities</label>
-            <input class="location-input" id="home-search" type="search" autocomplete="off" placeholder="Type to filter all Virginia localities" />
-            <label class="location-field" for="home-locality">Home locality <span class="optional">(optional)</span></label>
-            <select class="location-options" id="home-locality" size="6" aria-describedby="home-count"></select>
+            <label class="location-field" for="home-search">Home locality <span class="optional">(optional)</span></label>
+            <div class="locality-picker">
+              <input class="location-input" id="home-search" type="search" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="home-locality-list" autocomplete="off" placeholder="Type or choose a locality" aria-describedby="home-count home-selection" />
+              <ul class="location-options" id="home-locality-list" role="listbox" aria-label="Virginia home localities" hidden></ul>
+            </div>
+            <input id="home-locality" type="hidden" />
             <p class="location-count" id="home-count" role="status" aria-live="polite"></p>
             <button class="text-button" id="clear-home" type="button">Skip / clear home locality</button>
             <p id="home-selection" class="quiet-note">No home locality selected.</p>
@@ -75,9 +90,31 @@
           <div class="profile-footer-actions"><button class="text-button" id="remove-profile" type="button" hidden>Delete saved profile</button><a href="./index.html#help">Find help now →</a></div>
         </form>
       </section>
+      <section class="question-flow checklist-card" id="preparedness-plan" aria-labelledby="checklist-title" hidden>
+        <p class="eyebrow">Your next steps</p>
+        <h1 id="checklist-title" tabindex="-1">Personal preparedness checklist</h1>
+        <p id="checklist-context">Start with these general preparation tasks. Save a profile above to tailor your checklist.</p>
+        <p class="quiet-note">Preparation only. This guide does not check live alerts, safe routes, open shelters or eligibility. In immediate danger or seriously injured, call <a href="tel:911">911</a>.</p>
+        <p id="checklist-count" role="status" aria-live="polite"></p>
+        <ul class="checklist" id="checklist-items"></ul>
+        <p id="checklist-status" role="status" aria-live="polite"></p>
+        <div class="step-actions checklist-actions"><button class="secondary-button" id="checklist-edit-profile" type="button">Edit household answers</button><a class="secondary-button" href="./index.html">Back to main page</a></div>
+        <div class="step-actions checklist-actions"><button class="primary-button" id="checklist-print" type="button">Print / save as PDF</button><button class="secondary-button" id="checklist-download" type="button">Download checklist (.txt)</button></div>
+        <details id="checklist-export" class="checklist-export">
+          <summary>View or copy checklist text</summary>
+          <label class="location-field" for="checklist-export-text">Checklist text</label>
+          <textarea class="location-input" id="checklist-export-text" rows="12" readonly></textarea>
+          <button class="text-button" id="checklist-select-text" type="button">Select all text</button>
+        </details>
+        <p class="quiet-note">Your checklist may reflect private household needs. Keep printed and downloaded copies private. Exports include tasks and progress, without your account name or raw profile answers.</p>
+        <p class="location-count">Review any needs you did not share. Federal guidance reviewed September 26, 2026. Sources are linked beneath each task.</p>
+        <noscript>JavaScript is needed to build your checklist. Visit <a href="https://www.ready.gov/plan">Ready.gov to make a plan</a>.</noscript>
+      </section>
     </main>
     <footer><p>Finding help does not require a profile. In immediate danger or seriously injured, call <a href="tel:911">911</a>.</p></footer>
     <script src="./localities.cjs"></script>
+    <script src="./locality-picker.js"></script>
+    <script src="./preparedness.cjs"></script>
     <script src="./profile.cjs"></script>
     <script src="./plan.js"></script>
   </body>

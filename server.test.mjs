@@ -30,20 +30,22 @@ test('keeps official resources available when chat is not configured', async () 
     const plan = await fetch(`${base}/plan.html`);
     assert.equal(plan.status, 200);
     assert.match(await plan.text(), /id="profile-form"/);
-    for (const asset of ['styles.css', 'app.js', 'plan.js', 'localities.cjs', 'referrals.cjs', 'profile.cjs']) {
+    for (const asset of ['styles.css', 'app.js', 'plan.js', 'locality-picker.js', 'localities.cjs', 'referrals.cjs', 'profile.cjs']) {
       const response = await fetch(`${base}/${asset}`);
       assert.equal(response.status, 200, `${asset} should be served`);
       assert.match(response.headers.get('content-type'), /(?:javascript|css)/);
     }
-    const chat = await fetch(`${base}/api/chat`, { method: 'POST' });
+    const chat = await fetch(`${base}/api/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(validBody) });
     assert.equal(chat.status, 503);
   });
 });
 
 test('passes questionnaire context and chat to Azure without exposing the key in the response', async () => {
   let call;
+  const calls = [];
   await withServer({ env, fetchImpl: async (url, options) => {
     call = { url: String(url), options };
+    calls.push(call);
     return new Response(JSON.stringify({ choices: [{ message: { content: 'Open the official assistance site.' } }] }), { status: 200 });
   } }, async base => {
     const response = await fetch(`${base}/api/chat`, {
@@ -51,13 +53,24 @@ test('passes questionnaire context and chat to Azure without exposing the key in
     });
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { reply: 'Open the official assistance site.' });
+    const followup = await fetch(`${base}/api/chat`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...validBody, messages: [...validBody.messages,
+        { role: 'assistant', content: 'Open the official assistance site.' },
+        { role: 'user', content: 'Which locality did I choose?' }] })
+    });
+    assert.equal(followup.status, 200);
   });
+  call = calls[0];
   assert.equal(call.url, 'https://example.openai.azure.com/openai/v1/chat/completions');
   assert.equal(call.options.headers['api-key'], 'test-key');
   const payload = JSON.parse(call.options.body);
   assert.equal(payload.model, 'flood-chat');
   assert.match(payload.messages[1].content, /Albemarle County/);
   assert.equal(payload.messages.at(-1).content, 'Please suggest a next step.');
+  const followupPayload = JSON.parse(calls[1].options.body);
+  assert.equal(followupPayload.messages[1].content, payload.messages[1].content);
+  assert.equal(followupPayload.messages.at(-1).content, 'Which locality did I choose?');
 });
 
 test('does not send immediate-danger answers to the model', async () => {
@@ -313,4 +326,80 @@ test('Google sign-in and explicit linking preserve profiles and reject replay, w
       assert.equal((await fetch(base + '/google-auth.mjs')).status, 404);
     });
   } finally { accounts.close(); profiles.close(); }
+});
+
+test('checklist progress is owner-scoped, preserves profile edits, prunes obsolete tasks, and stays out of AI', async () => {
+  const { randomBytes } = await import('node:crypto');
+  const { createAccountDatabase } = await import('./auth-db.mjs');
+  const { createProfileDatabase } = await import('./profile-db.mjs');
+  const { default: schema } = await import('./profile.cjs');
+  const accounts = createAccountDatabase(':memory:');
+  const profiles = createProfileDatabase(':memory:', randomBytes(32));
+  const tokenA = randomBytes(32).toString('hex'); const tokenB = randomBytes(32).toString('hex');
+  const profile = { homeLocality: 'Fairfax city', householdSize: '2', ...Object.fromEntries(schema.profileQuestions.map(({ key }) => [key, 'yes'])) };
+  profiles.save(tokenA, profile); profiles.save(tokenB, profile);
+  let payload;
+  try {
+    await withServer({ env, profileStore: profiles, accountStore: accounts,
+      fetchImpl: async (url, options) => { payload = JSON.parse(options.body); return Response.json({ choices: [{ message: { content: 'Check official guidance.' } }] }); }
+    }, async base => {
+      const headers = { 'Content-Type': 'application/json', 'X-HERO-Profile': '1' };
+      const saveTask = (body, token = tokenA, extra = {}) => fetch(base + '/api/checklist', { method: 'PUT', headers: { ...headers, Cookie: 'hero_profile=' + token, ...extra }, body: JSON.stringify(body) });
+      assert.equal((await fetch(base + '/preparedness.cjs')).status, 200);
+      assert.equal((await saveTask({ taskId: 'alerts', completed: true })).status, 200);
+      assert.deepEqual(profiles.get(tokenA).completedTasks, ['alerts']);
+      assert.deepEqual(profiles.get(tokenB).completedTasks, []);
+      assert.equal((await saveTask({ taskId: 'power-backup', completed: true })).status, 200);
+      const edited = await fetch(base + '/api/profile', { method: 'PUT', headers: { ...headers, Cookie: 'hero_profile=' + tokenA }, body: JSON.stringify({ ...profile, householdSize: '4' }) });
+      assert.equal(edited.status, 200);
+      assert.deepEqual(profiles.get(tokenA).completedTasks, ['alerts', 'power-backup'], 'Profile save does not erase progress');
+      assert.equal((await saveTask({ taskId: 'alerts', completed: false })).status, 200);
+      assert.equal(profiles.get(tokenA).householdSize, '4', 'Checking tasks does not overwrite answers');
+      const changed = await fetch(base + '/api/profile', { method: 'PUT', headers: { ...headers, Cookie: 'hero_profile=' + tokenA }, body: JSON.stringify({ ...profile, medicalPower: 'no' }) });
+      assert.equal(changed.status, 200); assert.deepEqual(profiles.get(tokenA).completedTasks, []);
+      assert.equal((await saveTask({ taskId: 'power-backup', completed: true })).status, 400);
+      assert.equal((await saveTask({ taskId: 'unknown', completed: true })).status, 400);
+      assert.equal((await saveTask({ taskId: 'alerts', completed: 'yes' })).status, 400);
+      assert.equal((await saveTask({ taskId: 'alerts', completed: true }, tokenA, { Origin: 'https://evil.example' })).status, 403);
+      assert.equal((await saveTask({ taskId: 'alerts', completed: true }, tokenA, { 'X-HERO-Profile-Owner': 'another-account' })).status, 409);
+      assert.equal((await saveTask({ taskId: 'alerts', completed: true }, randomBytes(32).toString('hex'))).status, 409);
+      assert.equal((await saveTask({ taskId: 'contacts', completed: true, profileId: tokenB })).status, 200);
+      const chat = await fetch(base + '/api/chat', { method: 'POST', headers: { ...headers, Cookie: 'hero_profile=' + tokenA }, body: JSON.stringify({ ...validBody, useProfile: true }) });
+      assert.equal(chat.status, 200); assert.doesNotMatch(JSON.stringify(payload), /completedTasks|power-backup|contacts/);
+      assert.deepEqual(profiles.get(tokenB).completedTasks, []);
+    });
+  } finally { profiles.close(); accounts.close(); }
+});
+
+test('F7 checks only an explicit damage locality and rejects danger, free text and cross-origin requests', async () => {
+  const lookups = [];
+  await withServer({ env: {}, declarationService: { lookup: async locality => { lookups.push(locality); return { status: 'checked', locality, checkedAt: '2026-09-26T12:00:00Z', records: [] }; } } }, async base => {
+    const post = (body, extra = {}) => fetch(base + '/api/declarations', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-HERO-Declarations': '1', ...extra }, body: JSON.stringify(body) });
+    assert.equal((await post({ danger: 'yes', damageLocality: 'Fairfax County' })).status, 400);
+    assert.equal((await post({ danger: 'unsure', damageLocality: 'Fairfax County' })).status, 400);
+    assert.equal((await post({ danger: 'no', locality: 'Fairfax County' })).status, 400, 'Current locality must not stand in for damage locality');
+    assert.equal((await post({ danger: 'no', damageLocality: 'Unknown' })).status, 400);
+    assert.equal((await post({ danger: 'no', damageLocality: 'Fairfax city' }, { Origin: 'https://evil.example' })).status, 403);
+    assert.deepEqual(lookups, []);
+    const result = await post({ danger: 'no', damageLocality: 'Fairfax city', pregnant: 'yes', homeLocality: 'Richmond city', locality: 'Fairfax County' });
+    assert.equal(result.status, 200); assert.equal((await result.json()).locality, 'Fairfax city'); assert.deepEqual(lookups, ['Fairfax city']);
+    assert.equal((await fetch(base + '/declarations.mjs')).status, 404);
+  });
+});
+
+test('F8 serves compressed public assets, supports revalidation, and never compresses or caches private API data', async () => {
+  await withServer({ env: {} }, async base => {
+    const page = await fetch(base + '/index.html', { headers: { 'Accept-Encoding': 'gzip' } });
+    assert.equal(page.status, 200); assert.equal(page.headers.get('content-encoding'), 'gzip');
+    assert.match(await page.text(), /language-choice/);
+    const etag = page.headers.get('etag'); assert.ok(etag);
+    const cached = await fetch(base + '/index.html', { headers: { 'If-None-Match': etag } });
+    assert.equal(cached.status, 304);
+    const plain = await fetch(base + '/index.html', { headers: { 'Accept-Encoding': 'gzip;q=0, identity' } });
+    assert.equal(plain.headers.get('content-encoding'), null);
+    for (const path of ['/sw.js', '/language.cjs', '/accessibility.js', '/offline.html']) assert.equal((await fetch(base + path)).status, 200);
+    const account = await fetch(base + '/api/account');
+    assert.equal(account.headers.get('cache-control'), 'no-store');
+    assert.equal(account.headers.get('etag'), null);
+  });
 });

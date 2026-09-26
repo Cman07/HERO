@@ -30,14 +30,15 @@ test('SQLite profiles persist across reopen, stay isolated, are encrypted, and c
   let store;
   try {
     store = openProfileDatabase(directory);
-    store.save(token, exampleProfile());
+    store.save(token, exampleProfile({ completedTasks: ['power-backup'] }));
     store.save(other, exampleProfile({ homeLocality: 'Fairfax city', pregnant: 'no' }));
     store.close(); store = openProfileDatabase(directory);
     assert.equal(store.get(token).pregnant, 'yes');
+    assert.deepEqual(store.get(token).completedTasks, ['power-backup']);
     assert.equal(store.get(other).homeLocality, 'Fairfax city');
     assert.equal(store.get('invalid'), null);
     const bytes = readFileSync(join(directory, 'profiles.sqlite'));
-    for (const text of ['Albemarle County', 'pregnant', token, 'Fairfax city']) assert.equal(bytes.includes(Buffer.from(text)), false, text);
+    for (const text of ['Albemarle County', 'pregnant', 'power-backup', token, 'Fairfax city']) assert.equal(bytes.includes(Buffer.from(text)), false, text);
     store.remove(token);
     assert.equal(store.get(token), null);
     assert.equal(store.get(other).pregnant, 'no');
@@ -50,7 +51,7 @@ test('encrypted payload cannot be read with a different key', () => {
   const token = randomBytes(32).toString('hex');
   let store;
   try {
-    store = createProfileDatabase(path, randomBytes(32)); store.save(token, exampleProfile()); store.close();
+    store = createProfileDatabase(path, randomBytes(32)); store.save(token, exampleProfile({ completedTasks: ['power-backup'] })); store.close();
     store = createProfileDatabase(path, randomBytes(32));
     assert.throws(() => store.get(token));
   } finally { store?.close(); rmSync(directory, { recursive: true, force: true }); }

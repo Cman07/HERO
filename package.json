@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test",
-    "start:private": "node private-server.mjs"
+    "start:private": "node private-server.mjs",
+    "check:ai": "node check-ai.mjs"
   },
   "dependencies": {
     "google-auth-library": "^11.1.0"

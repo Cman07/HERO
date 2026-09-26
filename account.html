@@ -3,30 +3,42 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#103b61" />
+    <meta name="theme-color" content="#0a3922" />
     <meta name="description" content="Sign in to save and manage your Virginia Flood Guide household profile." />
     <title>Your account — Virginia Flood Guide</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b61'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23b4edf1' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a3922'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23d2f2e3' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <script src="./language.cjs"></script>
+    <script src="./accessibility.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to main content</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <div class="brand">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 11c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 17c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="#b4edf1" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <span>Virginia Flood Guide</span>
-        </div>
-        <div class="header-links"><span class="scope">Virginia · Flooding</span><a id="account-nav" href="./account.html">Sign in</a></div>
+        <a class="brand" href="./index.html" aria-label="Virginia Flood Guide home">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 9c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 16c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <span>Virginia<br class="brand-break" /> Flood Guide</span>
+        </a>
+        <nav class="header-links" aria-label="Main navigation">
+          <a href="./index.html">Home</a>
+          <a href="./index.html#help" data-start-help>Find help now</a>
+          <a href="./plan.html">Plan ahead</a>
+          <a class="nav-account" id="account-nav" href="./account.html" aria-current="page">Sign in</a>
+        </nav>
       </div>
     </header>
-    <main id="main" class="account-main">
-      <a href="./index.html">← Back to flood guide</a>
+    <section class="access-controls" aria-label="Language settings">
+      <div class="access-controls-inner">
+        <label for="language-choice">Language / Idioma <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></label>
+      </div>
+      <p class="connection-notice" id="connection-notice" role="status" hidden>Connection unavailable: the public guide is available. Accounts, saved profiles, chat, FEMA checks and external sites need a connection. Nothing is queued for automatic sending.</p>
+    </section><noscript><p class="connection-notice">JavaScript is off. You can use the official resources below. Questionnaire, account and profile controls need JavaScript.</p><p lang="es">JavaScript está desactivado. Puede usar los recursos oficiales. Si está en peligro inmediato o tiene lesiones graves, <a href="tel:911">llame al 911</a>.</p><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> · <a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a></noscript>
+    <main tabindex="-1" id="main" class="account-main">
+      <a class="back-link" href="./index.html">← Back to flood guide</a>
       <section class="question-flow account-card" aria-labelledby="account-title">
         <p class="eyebrow">Optional account</p>
         <h1 id="account-title">Your household profile</h1>
-        <p class="lead">Sign in to save your profile and return to it from another browser using this site.</p>
-        <p class="quiet-note">Use Google or a local username and password. Your household answers stay in encrypted storage on this HERO computer. Password recovery is not available yet.</p>
+        <p class="lead">Keep your household plan close. Come back to your saved answers and checklist whenever you need them.</p>
         <p id="account-status" role="status" aria-live="polite">Checking your sign-in…</p>
         <section class="quiet-note" aria-labelledby="google-title">
           <h2 id="google-title">Continue with Google</h2>
@@ -40,7 +52,7 @@
           </div>
           <form id="account-form">
             <label class="location-field" for="account-username">Username</label>
-            <input class="location-input" id="account-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{2,31}" aria-describedby="username-hint" />
+            <input class="location-input" id="account-username" autocapitalize="none" spellcheck="false" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{2,31}" aria-describedby="username-hint" />
             <p id="username-hint" class="location-count">3–32 letters, numbers, dots, underscores, or hyphens. Choose a username you’ll remember.</p>
             <label class="location-field" for="account-password">Password</label>
             <input class="location-input" id="account-password" name="password" type="password" autocomplete="current-password" required minlength="12" maxlength="128" aria-describedby="password-hint" />

@@ -22,6 +22,11 @@ The existing Virginia Flood Guide Site was reported as live in the prior convers
 
 ## Supplied sources
 
+- https://www.ready.gov/plan
+- https://www.ready.gov/floods
+- https://www.ready.gov/kit
+- https://www.ready.gov/disability
+- https://www.ready.gov/pets
 - https://www.disasterassistance.gov/
 - https://www.fema.gov/about/openfema/data-sets
 - https://www.fema.gov/about/openfema/api
@@ -36,16 +41,16 @@ Microsoft Foundry, Azure Translator, and Voice Live were identified as possible 
 
 ## Local implementation status
 
-The local Node website in this repository now implements F1–F4 and F5's optional accounts with SQLite. The earlier Sites source is still absent and has not been updated.
+The local Node website in this repository now implements F1–F9 with optional accounts and encrypted local SQLite profiles. The earlier Sites source is still absent and has not been updated.
 
 - F1: public starting page and immediate-danger 911 action.
 - F2: danger, current-locality, and help-need questions.
 - F3: source-linked federal referrals with reasons and uncertainty wording.
 - F4: optional household questions and review.
 - F5: local account creation/sign-in/sign-out, private persistent profile save/edit/delete. Browser-only profiles remain supported; moving one into an account requires consent.
-- F6: personal preparedness checklist and print/export (next feature; not implemented).
-- F7: OpenFEMA declaration context for the damage locality (not implemented).
-- F8: reviewed language and accessibility/low-bandwidth finish (not implemented).
-- F9: live AI conversation; server wiring exists, but real replies require Azure configuration.
+- F6: curated personal preparedness checklist, encrypted task progress, print/save as PDF and text export. Tasks adapt to explicitly selected household needs; no AI request is needed.
+- F7: optional OpenFEMA declaration lookup for an explicitly selected damage locality, exact county/city code matching, dated source-linked records and unknown/stale fallback.
+- F8: bundled English/Spanish interface and checklist exports, keyboard/screen-reader improvements, compressed/revalidated assets, public-only offline guide and explicit retry/connection feedback. Human language and assistive-technology acceptance review remains a release check.
+- F9: bounded conversational AI through the configured hosted Foundry agent or direct Azure deployment, selected-language instructions, official reply links, local emergency guard, retry/clear controls and operator connection check. All 39 automated tests pass. Real English and Spanish replies were verified through the configured Foundry agent; version 2 contains the safety/language policy and no external tools.
 
 User preference: SQLite stays local. Saved health, disability, access, and support answers must not be sent to AI. Only home locality and household size may enter optional saved AI context. See FLOOD_GUIDE_README.md for setup and limitations.

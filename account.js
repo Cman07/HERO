@@ -28,6 +28,7 @@
     report('');
   }
   async function request(path, body) {
+    if (!navigator.onLine) throw new Error('You are offline. Reconnect to use your account.');
     const response = await fetch(path, {
       method: body ? 'POST' : 'GET', signal: AbortSignal.timeout(15000),
       headers: { 'Content-Type': 'application/json', 'X-HERO-Account': '1', 'X-HERO-Profile': '1' },
@@ -88,7 +89,7 @@
     event.preventDefault();
     if (busy) return;
     if (mode === 'register' && password.value !== confirmation.value) {
-      confirmation.setCustomValidity('The passwords do not match.'); confirmation.reportValidity(); return;
+      confirmation.setCustomValidity(window.heroAccess.translate('The passwords do not match.')); confirmation.reportValidity(); return;
     }
     const body = { username: document.getElementById('account-username').value, password: password.value };
     setBusy(true); report(mode === 'register' ? 'Creating your account…' : 'Signing in…');

@@ -1,3 +1,4 @@
+const profilePreparation = typeof module !== 'undefined' ? require('./preparedness.cjs') : window.floodPreparedness;
 const profileQuestions = [
   { key: 'pregnant', label: 'Are you or anyone in your household pregnant?' },
   { key: 'children', label: 'Do children live in your household?' },
@@ -18,6 +19,7 @@ function normalizeProfile(value, localities) {
     if (!answerValues.includes(value[key])) throw new Error('Choose yes, no, or prefer not to say for each question.');
     result[key] = value[key];
   }
+  result.completedTasks = profilePreparation.normalizeCompletedTasks(value.completedTasks ?? [], result);
   return result;
 }
 const profileSchema = { profileQuestions, normalizeProfile };
