@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#103b61" />
+    <meta name="description" content="Create an optional household profile for the Virginia Flood Guide." />
+    <title>Plan ahead — Virginia Flood Guide</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b61'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23b4edf1' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 11c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 17c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="#b4edf1" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <span>Virginia Flood Guide</span>
+        </div>
+        <div class="header-links"><span class="scope">Virginia · Flooding</span><a id="account-nav" href="./account.html">Sign in</a></div>
+      </div>
+    </header>
+    <main id="main" class="plan-main">
+      <a class="back-link" href="./index.html">← Back to flood guide</a>
+      <div class="intro plan-intro">
+        <p class="eyebrow">Before an emergency</p>
+        <h1>Your household, your plan.</h1>
+        <p class="lead">Take a few minutes to record what your household may need. Every question is optional. You can find help without a profile.</p>
+      </div>
+      <section class="question-flow profile-card" aria-labelledby="profile-title">
+        <div class="profile-card-top"><span class="profile-badge">Household profile</span><span id="profile-progress">Step 1 of 4</span></div>
+        <div class="profile-progress-track" aria-hidden="true"><span id="profile-progress-fill"></span></div>
+        <div class="quiet-note account-summary"><span id="profile-account">Checking your sign-in…</span><a href="./account.html">Manage account</a></div>
+        <p id="profile-summary" class="quiet-note">Checking for a saved profile…</p>
+        <form id="profile-form" novalidate>
+          <section class="profile-panel" data-panel="0" aria-labelledby="profile-title">
+            <h2 id="profile-title" tabindex="-1">Where do you call home?</h2>
+            <p class="panel-description">Your home locality helps you prepare. When finding help, you’ll confirm where you are now separately.</p>
+            <label class="location-field" for="home-search">Search counties and independent cities</label>
+            <input class="location-input" id="home-search" type="search" autocomplete="off" placeholder="Type to filter all Virginia localities" />
+            <label class="location-field" for="home-locality">Home locality <span class="optional">(optional)</span></label>
+            <select class="location-options" id="home-locality" size="6" aria-describedby="home-count"></select>
+            <p class="location-count" id="home-count" role="status" aria-live="polite"></p>
+            <button class="text-button" id="clear-home" type="button">Skip / clear home locality</button>
+            <p id="home-selection" class="quiet-note">No home locality selected.</p>
+            <label class="location-field" for="household-size">How many people are in your household?</label>
+            <select class="profile-select" id="household-size"><option value="unspecified">Prefer not to say</option><option>1</option><option>2</option><option>3</option><option>4</option><option value="5+">5 or more</option></select>
+          </section>
+          <section class="profile-panel" data-panel="1" hidden>
+            <h2 tabindex="-1">Who are you planning for?</h2>
+            <p class="panel-description">Include yourself and anyone in your household. You don’t need to share names or medical details.</p>
+            <div id="household-questions"></div>
+          </section>
+          <section class="profile-panel" data-panel="2" hidden>
+            <h2 tabindex="-1">What support might help?</h2>
+            <p class="panel-description">These answers stay in your local profile and are not sent to the AI chatbot.</p>
+            <div id="support-questions"></div>
+          </section>
+          <section class="profile-panel" data-panel="3" hidden>
+            <h2 tabindex="-1">Review your profile</h2>
+            <p class="panel-description">You can return to any step to change an answer.</p>
+            <dl class="profile-review" id="profile-review"></dl>
+          </section>
+          <p id="profile-status" role="status" aria-live="polite"></p>
+          <div class="step-actions profile-navigation">
+            <button class="secondary-button" id="profile-back" type="button" hidden>Back</button>
+            <button class="primary-button" id="profile-next" type="button">Continue</button>
+            <button class="primary-button" id="profile-save" type="submit" hidden>Save profile on this browser</button>
+          </div>
+          <div class="delete-confirm" id="delete-confirm" hidden>
+            <p><strong>Delete this saved profile?</strong> This removes the household answers from the local database. You can create a new profile later. Your account will remain.</p>
+            <div class="step-actions"><button class="primary-button" id="confirm-delete" type="button">Delete profile</button><button class="secondary-button" id="cancel-delete" type="button">Keep profile</button></div>
+          </div>
+          <div class="profile-footer-actions"><button class="text-button" id="remove-profile" type="button" hidden>Delete saved profile</button><a href="./index.html#help">Find help now →</a></div>
+        </form>
+      </section>
+    </main>
+    <footer><p>Finding help does not require a profile. In immediate danger or seriously injured, call <a href="tel:911">911</a>.</p></footer>
+    <script src="./localities.cjs"></script>
+    <script src="./profile.cjs"></script>
+    <script src="./plan.js"></script>
+  </body>
+</html>

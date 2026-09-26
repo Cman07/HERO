@@ -34,6 +34,18 @@ The existing Virginia Flood Guide Site was reported as live in the prior convers
 
 Microsoft Foundry, Azure Translator, and Voice Live were identified as possible later services. Live AI and language/voice features need setup, credentials, and review of emergency wording.
 
-## Next step
+## Local implementation status
 
-Locate and review the existing Site's source before further implementation. Treat this local directory as a project brief until those files are available.
+The local Node website in this repository now implements F1–F4 and F5's optional accounts with SQLite. The earlier Sites source is still absent and has not been updated.
+
+- F1: public starting page and immediate-danger 911 action.
+- F2: danger, current-locality, and help-need questions.
+- F3: source-linked federal referrals with reasons and uncertainty wording.
+- F4: optional household questions and review.
+- F5: local account creation/sign-in/sign-out, private persistent profile save/edit/delete. Browser-only profiles remain supported; moving one into an account requires consent.
+- F6: personal preparedness checklist and print/export (next feature; not implemented).
+- F7: OpenFEMA declaration context for the damage locality (not implemented).
+- F8: reviewed language and accessibility/low-bandwidth finish (not implemented).
+- F9: live AI conversation; server wiring exists, but real replies require Azure configuration.
+
+User preference: SQLite stays local. Saved health, disability, access, and support answers must not be sent to AI. Only home locality and household size may enter optional saved AI context. See FLOOD_GUIDE_README.md for setup and limitations.

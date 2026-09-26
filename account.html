@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#103b61" />
+    <meta name="description" content="Sign in to save and manage your Virginia Flood Guide household profile." />
+    <title>Your account — Virginia Flood Guide</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23103b61'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23b4edf1' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 11c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 17c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="#b4edf1" stroke-width="2" stroke-linecap="round"/></svg></span>
+          <span>Virginia Flood Guide</span>
+        </div>
+        <div class="header-links"><span class="scope">Virginia · Flooding</span><a id="account-nav" href="./account.html">Sign in</a></div>
+      </div>
+    </header>
+    <main id="main" class="account-main">
+      <a href="./index.html">← Back to flood guide</a>
+      <section class="question-flow account-card" aria-labelledby="account-title">
+        <p class="eyebrow">Optional account</p>
+        <h1 id="account-title">Your household profile</h1>
+        <p class="lead">Sign in to save your profile and return to it from another browser using this site.</p>
+        <p class="quiet-note">This local account needs only a username and password. No email or health information is needed to create it. Password recovery is not available yet.</p>
+        <p id="account-status" role="status" aria-live="polite">Checking your sign-in…</p>
+        <div id="signed-out" hidden>
+          <div class="account-tabs" aria-label="Choose an account action">
+            <button class="secondary-button" id="login-mode" type="button" aria-pressed="true">Sign in</button>
+            <button class="secondary-button" id="register-mode" type="button" aria-pressed="false">Create account</button>
+          </div>
+          <form id="account-form">
+            <label class="location-field" for="account-username">Username</label>
+            <input class="location-input" id="account-username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required minlength="3" maxlength="32" pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{2,31}" aria-describedby="username-hint" />
+            <p id="username-hint" class="location-count">3–32 letters, numbers, dots, underscores, or hyphens. Choose a username you’ll remember.</p>
+            <label class="location-field" for="account-password">Password</label>
+            <input class="location-input" id="account-password" name="password" type="password" autocomplete="current-password" required minlength="12" maxlength="128" aria-describedby="password-hint" />
+            <p id="password-hint" class="location-count">Use 12–128 characters.</p>
+            <div id="confirm-password-field" hidden>
+              <label class="location-field" for="account-confirm">Confirm password</label>
+              <input class="location-input" id="account-confirm" type="password" autocomplete="new-password" maxlength="128" />
+            </div>
+            <div class="step-actions"><button class="primary-button" id="account-submit" type="submit">Sign in</button></div>
+          </form>
+        </div>
+        <div id="signed-in" hidden>
+          <h2 id="signed-in-name"></h2>
+          <p>Your saved account profile is available whenever you sign in here. Signing out ends this browser’s account session.</p>
+          <div id="browser-profile-import" class="quiet-note" hidden>
+            <p>A separate profile was saved on this browser before you signed in. You can move it into your account if your account has no profile yet.</p>
+            <label class="consent-label"><input id="import-consent" type="checkbox" /><span>I want to move this browser’s saved profile into my account’s local encrypted storage. The browser-only copy will be removed.</span></label>
+            <button class="secondary-button" id="import-profile" type="button">Move browser profile to account</button>
+          </div>
+          <div class="step-actions"><a class="primary-button" href="./plan.html">Review or edit profile</a><button class="secondary-button" id="account-logout" type="button">Sign out</button></div>
+        </div>
+        <div class="profile-footer-actions"><a href="./plan.html">Continue without an account</a><a href="./index.html#help">Find help now →</a></div>
+      </section>
+    </main>
+    <footer><p>In immediate danger or seriously injured, call <a href="tel:911">911</a>. Finding help does not require an account.</p></footer>
+    <script src="./account.js"></script>
+  </body>
+</html>

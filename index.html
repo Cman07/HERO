@@ -17,7 +17,7 @@
           <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 11c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 17c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="#b4edf1" stroke-width="2" stroke-linecap="round"/></svg></span>
           <span>Virginia Flood Guide</span>
         </div>
-        <span class="scope">Virginia · Flooding</span>
+        <div class="header-links"><span class="scope">Virginia · Flooding</span><a id="account-nav" href="./account.html">Sign in</a></div>
       </div>
     </header>
     <main id="main">
@@ -46,12 +46,13 @@
           </article>
           <article class="path secondary">
             <p class="path-label">Before an emergency</p>
-            <h3>Prepare ahead</h3>
-            <p>A personal flood checklist and optional profile will be available here in a later version.</p>
-            <div class="path-detail"><div class="quiet-note">There is no profile to fill out or save on this page yet.</div></div>
+            <h3>Plan ahead</h3>
+            <p>Create a household profile with optional questions about children, pregnancy, accessibility, transport, and other support needs.</p>
+            <div class="path-detail"><a class="action" href="./plan.html">Plan ahead</a></div>
           </article>
         </div>
       </section>
+      <div class="question-reveal" id="help-reveal" hidden>
       <section class="question-flow" id="help-questions" aria-label="Find help now questions" hidden>
         <div class="step" id="danger-step">
           <p class="step-count">Question 1 of 3</p>
@@ -67,17 +68,23 @@
           <h2 tabindex="-1">Call 911 for immediate help</h2>
           <p>If you are in danger, seriously injured, or unsure whether you need emergency help, call 911. This guide cannot assess an emergency or contact responders for you.</p>
           <a class="action" href="tel:911">Call 911</a>
-          <div class="step-actions"><button class="secondary-button" type="button" data-restart>Start over</button></div>
+          <div class="step-actions"><button class="secondary-button" type="button" data-back="location-step">Continue</button></div>
         </div>
         <div class="step" id="location-step" hidden>
           <p class="step-count">Question 2 of 3</p>
           <h2 tabindex="-1">Where are you right now?</h2>
           <p>Choose the Virginia county or independent city where you are now. This may differ from where you live or where flooding caused damage. You can skip this question.</p>
           <form id="location-form" novalidate>
-            <label class="location-field" for="locality-search">Search counties and independent cities</label>
-            <input class="location-input" id="locality-search" type="search" autocomplete="off" placeholder="Type to filter the list" aria-describedby="location-hint location-count" />
-            <label class="location-field" for="current-locality">Select your current locality</label>
-            <select class="location-options" id="current-locality" name="current-locality" size="8" aria-describedby="location-hint location-count location-error"></select>
+            <div class="quiet-note" id="saved-home-choice" hidden>
+              <p id="saved-home-text"></p>
+              <button class="secondary-button" id="use-home-locality" type="button">I'm at my saved home locality now</button>
+            </div>
+            <label class="location-field" for="locality-search">Select your current Virginia locality</label>
+            <div class="locality-picker" id="locality-picker">
+              <input class="location-input" id="locality-search" type="search" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="current-locality-list" autocomplete="off" placeholder="Type or choose a locality" aria-describedby="location-hint location-count location-error" />
+              <ul class="location-options" id="current-locality-list" role="listbox" aria-label="Virginia localities" hidden></ul>
+            </div>
+            <input id="current-locality" name="current-locality" type="hidden" />
             <p class="location-count" id="location-count" role="status" aria-live="polite"></p>
             <p id="location-hint">Choose one option from the list, then continue. A city and a county with the same name are separate choices.</p>
             <p class="form-error" id="location-error" role="alert" hidden></p>
@@ -91,7 +98,12 @@
         <div class="step" id="need-step" hidden>
           <p class="step-count">Question 3 of 3</p>
           <h2 tabindex="-1">What kind of help are you looking for?</h2>
-          <p>Choose the closest option to start the chat. You can still open the official resources directly.</p>
+          <p>Choose the closest option to see official next steps. You can also ask a follow-up question in the chat.</p>
+          <div class="quiet-note" id="household-context-choice" hidden>
+            <p id="household-context-summary"></p>
+            <label class="context-choice"><input id="use-profile" type="checkbox" /><span>Share only my saved home locality and household size with Azure AI alongside today's answers. Saved health and support details stay local.</span></label>
+          </div>
+          <p id="profile-load-note" class="quiet-note" hidden></p>
           <div class="choices">
             <button class="choice" type="button" data-need="A place to stay">A place to stay</button>
             <button class="choice" type="button" data-need="Food or basic supplies">Food or basic supplies</button>
@@ -102,9 +114,26 @@
           <div class="step-actions"><button class="secondary-button" type="button" data-back="location-step">Back</button></div>
         </div>
         <div class="step" id="summary-step" hidden>
-          <h2 tabindex="-1">Chat about your next steps</h2>
+          <h2 tabindex="-1">Your next steps</h2>
           <p id="summary-text"></p>
-          <p class="chat-note">Your questionnaire answers and messages are sent to the configured Azure AI service for this conversation. This guide does not save a profile. The locality you entered has not been verified. The chat cannot confirm eligibility, live conditions, or whether applications are open. Do not enter a street address, phone number, or other private details.</p>
+          <section class="referral-panel" aria-labelledby="referral-heading">
+            <h3 id="referral-heading">Official places to start</h3>
+            <p id="referral-context">These links can help you check current options directly.</p>
+            <ol class="referral-list" id="referral-list">
+              <li><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a><p>Explore assistance and the official application route.</p></li>
+              <li><a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Disaster Recovery Center locator</a><p>Check for an in-person center and its current details.</p></li>
+            </ol>
+            <p id="referral-location-note"></p>
+            <p class="referral-caveat">Assistance agencies determine eligibility. Check each official site for current applications, center availability, hours, and services.</p>
+          </section>
+          <section class="private-reminders" id="private-reminders" hidden aria-labelledby="private-reminders-title">
+            <h3 id="private-reminders-title">Your private household reminders</h3>
+            <p>These come from your saved answers and are not sent to the AI. Review whether they still apply. When speaking directly with a representative through the official resources above, explain any support your household needs.</p>
+            <ul id="private-reminders-list"></ul>
+            <a href="./plan.html">Review or edit your household profile</a>
+          </section>
+          <h3>Ask a follow-up question</h3>
+          <p class="chat-note">Your answers and messages are sent to Azure AI for this conversation. This guide does not save chat history. If you opt in above, only saved home locality and household size are included. Saved health, disability, and other support answers stay local. The chat cannot verify your location or check eligibility, live conditions, or application availability. Keep private health and identifying details out of messages.</p>
           <div class="chat-log" id="chat-log" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions text"></div>
           <p class="chat-status" id="chat-status" role="status" aria-live="polite"></p>
           <form class="chat-form" id="chat-form">
@@ -112,17 +141,13 @@
             <textarea id="chat-input" maxlength="1000" placeholder="For example: Where can I ask about temporary housing?"></textarea>
             <div class="step-actions"><button class="primary-button" id="chat-send" type="submit">Send message</button></div>
           </form>
-          <h3>Official resources you can open now</h3>
-          <ul class="result-list">
-            <li><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> — explore federal assistance and the official application route.</li>
-            <li><a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a> — check for in-person locations and current details.</li>
-          </ul>
           <div class="step-actions">
             <button class="secondary-button" type="button" data-back="need-step">Back</button>
-            <button class="secondary-button" type="button" data-restart>Start over</button>
+            <button class="secondary-button" type="button" data-back="location-step">Continue</button>
           </div>
         </div>
       </section>
+      </div>
     </main>
 
     <section class="resources" aria-labelledby="resources-title">
@@ -136,177 +161,12 @@
       </div>
     </section>
     <footer>
-      <p>Official links reviewed September 24, 2026. This page does not check live alerts, evacuation orders, center hours, or assistance status.</p>
+      <p>Official links reviewed September 25, 2026. This page does not check live alerts, evacuation orders, center hours, or assistance status.</p>
       <p>This independent guide does not determine whether you qualify for assistance.</p>
     </footer>
     <script src="./localities.cjs"></script>
-    <script>
-      (() => {
-        const flow = document.getElementById('help-questions');
-        const start = document.getElementById('start-help');
-        const search = document.getElementById('locality-search');
-        const localitySelect = document.getElementById('current-locality');
-        const localityCount = document.getElementById('location-count');
-        const localities = Array.isArray(window.VIRGINIA_LOCALITIES) ? window.VIRGINIA_LOCALITIES : [];
-        const error = document.getElementById('location-error');
-        const chatLog = document.getElementById('chat-log');
-        const chatStatus = document.getElementById('chat-status');
-        const chatForm = document.getElementById('chat-form');
-        const chatInput = document.getElementById('chat-input');
-        const chatSend = document.getElementById('chat-send');
-        const answers = { danger: null, locality: null, need: null };
-        let messages = [];
-        let pending = false;
-        let requestController = null;
-        function filterLocalities() {
-          const selected = localitySelect.value;
-          const query = search.value.trim().toLocaleLowerCase();
-          const matches = localities.filter(name => name.toLocaleLowerCase().includes(query));
-          localitySelect.replaceChildren(...matches.map(name => new Option(name, name)));
-          localitySelect.value = matches.includes(selected) ? selected : '';
-          localitySelect.selectedIndex = matches.includes(selected) ? localitySelect.selectedIndex : -1;
-          localityCount.textContent = matches.length + (matches.length === 1 ? ' option' : ' options') + ' available. Select one from the list.';
-          if (!localities.length) {
-            error.textContent = 'The locality list is unavailable. You can skip this question.';
-            error.hidden = false;
-          }
-        }
-        function show(id) {
-          flow.hidden = false;
-          flow.querySelectorAll('.step').forEach(step => { step.hidden = step.id !== id; });
-          start.setAttribute('aria-expanded', 'true');
-          flow.querySelector('#' + id + ' h2').focus();
-        }
-        function setStatus(message, isError = false) {
-          chatStatus.textContent = message;
-          chatStatus.classList.toggle('error', isError);
-        }
-        function addMessage(role, content) {
-          const item = document.createElement('div');
-          item.className = 'chat-message ' + role;
-          const label = document.createElement('strong');
-          label.textContent = role === 'assistant' ? 'Flood Guide' : 'You';
-          const body = document.createElement('span');
-          body.textContent = content;
-          item.append(label, body);
-          chatLog.append(item);
-          chatLog.scrollTop = chatLog.scrollHeight;
-        }
-        async function askChat() {
-          if (pending) return;
-          messages = messages.slice(-12);
-          pending = true;
-          chatSend.disabled = true;
-          const controller = new AbortController();
-          requestController = controller;
-          setStatus('Finding a helpful next step…');
-          try {
-            const response = await fetch('/api/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ answers, messages }),
-              signal: controller.signal
-            });
-            const data = await response.json();
-            if (!response.ok || typeof data.reply !== 'string') throw new Error(data.error || 'Chat is unavailable right now.');
-            messages.push({ role: 'assistant', content: data.reply });
-            addMessage('assistant', data.reply);
-            setStatus('');
-          } catch (chatError) {
-            if (chatError.name !== 'AbortError') setStatus(chatError.message || 'Chat is unavailable right now. Use the official links below.', true);
-          } finally {
-            if (requestController === controller) {
-              pending = false;
-              requestController = null;
-              chatSend.disabled = false;
-            }
-          }
-        }
-        function beginChat() {
-          requestController?.abort();
-          requestController = null;
-          pending = false;
-          chatLog.replaceChildren();
-          chatInput.value = '';
-          setStatus('');
-          messages = [{ role: 'user', content: 'Please use my questionnaire answers to suggest a safe next step and ask one useful follow-up question if needed.' }];
-          const location = answers.locality ? 'Current locality you entered: ' + answers.locality + '.' : 'Current locality: not provided.';
-          document.getElementById('summary-text').textContent = location + ' Help requested: ' + answers.need + '.';
-          show('summary-step');
-          askChat();
-        }
-        function reset() {
-          requestController?.abort();
-          requestController = null;
-          pending = false;
-          chatSend.disabled = false;
-          messages = [];
-          chatLog.replaceChildren();
-          chatInput.value = '';
-          setStatus('');
-          answers.danger = null;
-          answers.locality = null;
-          answers.need = null;
-          search.value = '';
-          filterLocalities();
-          error.hidden = true;
-          show('danger-step');
-        }
-        start.addEventListener('click', reset);
-        search.addEventListener('input', () => {
-          filterLocalities();
-          if (localities.length) error.hidden = true;
-        });
-        localitySelect.addEventListener('change', () => { error.hidden = true; });
-        filterLocalities();
-        flow.addEventListener('click', event => {
-          const button = event.target.closest('button');
-          if (!button) return;
-          if (button.dataset.danger) {
-            answers.danger = button.dataset.danger;
-            show(button.dataset.danger === 'no' ? 'location-step' : 'emergency-step');
-          } else if (button.id === 'skip-location') {
-            answers.locality = null;
-            error.hidden = true;
-            show('need-step');
-          } else if (button.dataset.need) {
-            answers.need = button.dataset.need;
-            beginChat();
-          } else if (button.hasAttribute('data-back')) {
-            if (button.dataset.back === 'need-step') {
-              requestController?.abort();
-              requestController = null;
-              pending = false;
-              chatSend.disabled = false;
-            }
-            show(button.dataset.back);
-          } else if (button.hasAttribute('data-restart')) {
-            reset();
-          }
-        });
-        document.getElementById('location-form').addEventListener('submit', event => {
-          event.preventDefault();
-          const locality = localitySelect.value;
-          if (!localities.includes(locality)) {
-            error.textContent = 'Select a county or independent city from the list, or choose skip.';
-            error.hidden = false;
-            localitySelect.focus();
-            return;
-          }
-          answers.locality = locality;
-          error.hidden = true;
-          show('need-step');
-        });
-        chatForm.addEventListener('submit', event => {
-          event.preventDefault();
-          const question = chatInput.value.trim();
-          if (!question || pending) return;
-          messages.push({ role: 'user', content: question });
-          addMessage('user', question);
-          chatInput.value = '';
-          askChat();
-        });
-      })();
-    </script>
+    <script src="./referrals.cjs"></script>
+    <script src="./profile.cjs"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
