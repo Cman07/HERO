@@ -341,6 +341,11 @@
     } catch { renderDeclarations({ status: 'unknown', records: [] }); }
     finally { $('check-declarations').disabled = false; }
   });
+  $('chat-input').addEventListener('keydown', event => {
+    if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) return;
+    event.preventDefault();
+    if (!$('chat-send').disabled) $('chat-form').requestSubmit($('chat-send'));
+  });
   $('chat-form').addEventListener('submit', event => { event.preventDefault(); const question = $('chat-input').value.trim(); if (!question || pending) return; messages.push({ role: 'user', content: question }); addMessage('user', question); $('chat-input').value = ''; askChat(); });
   document.querySelector('#chat-emergency [data-restart]').addEventListener('click', reset);
   $('chat-retry').addEventListener('click', askChat);

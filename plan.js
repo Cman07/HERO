@@ -72,20 +72,11 @@
     document.querySelector('.profile-card').setAttribute('aria-labelledby', heading.id);
     if (focus) heading.focus();
   }
-  function showChecklist(focus = true) {
-    document.querySelector('.plan-intro').hidden = true;
-    document.querySelector('.profile-card').hidden = true;
+  function showChecklist() {
     document.getElementById('preparedness-plan').hidden = false;
-    if (focus) {
-      const heading = document.getElementById('checklist-title');
-      heading.focus({ preventScroll: true });
-      heading.scrollIntoView({ block: 'start' });
-    }
   }
   function showSurvey(focus = true) {
-    document.getElementById('preparedness-plan').hidden = true;
-    document.querySelector('.plan-intro').hidden = false;
-    document.querySelector('.profile-card').hidden = false;
+    document.getElementById('preparedness-plan').hidden = false;
     navigate(0, focus);
   }
   document.getElementById('checklist-edit-profile').addEventListener('click', () => {
@@ -147,7 +138,7 @@
       document.getElementById('return-home').hidden = false;
       document.getElementById('checklist-status').textContent = 'Checklist ready. Your progress is saved with this profile.';
       report('Your household profile is saved.');
-      showChecklist();
+      navigate(0, false); showChecklist();
     } catch (error) { report(error instanceof TypeError ? 'Could not reach profile storage. Your answers are still on this page; please try again.' : error.message, true); }
     finally { setBusy(false); }
   });
@@ -180,8 +171,8 @@
       if (!ready || accountChanged) { completedTasks = saved?.completedTasks || []; fill(saved); if (accountChanged) { showSurvey(); report('Your sign-in changed. The form now shows this account’s profile.'); } }
       const returningToSavedProfile = !ready && saved;
       ready = true; renderSaved();
-      if (returningToSavedProfile) showChecklist(false);
-      else if (!saved && !document.getElementById('preparedness-plan').hidden) showSurvey();
+      if (returningToSavedProfile) showChecklist();
+      else if (!saved && !document.getElementById('preparedness-plan').hidden) showSurvey(false);
     } catch {
       if (!ready) {
         document.getElementById('profile-summary').textContent = 'Profile storage could not be loaded.';
