@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a3922" />
-    <meta name="description" content="Sign in to save and manage your Virginia Flood Guide household profile." />
-    <title>Your account — Virginia Flood Guide</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a3922'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23d2f2e3' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#f7f9fa" />
+    <meta name="description" content="Sign in to save and manage your HERO — US Disaster Assistance Navigator household profile." />
+    <title>Your account — HERO — US Disaster Assistance Navigator</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/hero-shield.svg" />
+    <script src="./locales.cjs"></script>
     <script src="./language.cjs"></script>
     <script src="./accessibility.js"></script>
     <link rel="stylesheet" href="styles.css" />
@@ -15,13 +16,13 @@
     <a class="skip" href="#main">Skip to main content</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="./index.html" aria-label="Virginia Flood Guide home">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 9c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 16c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <span>Virginia<br class="brand-break" /> Flood Guide</span>
+        <a class="brand" href="./index.html" aria-label="HERO home">
+          <span class="brand-mark" aria-hidden="true"><img src="./assets/hero-shield.svg" width="48" height="48" alt="" decoding="async" /></span>
+          <span>HERO<span class="brand-subtitle">US Disaster Assistance Navigator</span></span>
         </a>
         <nav class="header-links" aria-label="Main navigation">
           <a href="./index.html">Home</a>
-          <a href="./index.html#help" data-start-help>Find help now</a>
+          <a href="./help.html" data-start-help>Find help now</a>
           <a href="./plan.html">Plan ahead</a>
           <a class="nav-account" id="account-nav" href="./account.html" aria-current="page">Sign in</a>
         </nav>
@@ -29,12 +30,17 @@
     </header>
     <section class="access-controls" aria-label="Language settings">
       <div class="access-controls-inner">
-        <label for="language-choice">Language / Idioma <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></label>
+        <label for="language-choice"><span aria-hidden="true">🌐</span> Language <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option>
+          <option value="ar" lang="ar" dir="rtl">العربية</option>
+          <option value="zh-Hans" lang="zh-Hans">简体中文</option>
+          <option value="ko" lang="ko">한국어</option>
+          <option value="vi" lang="vi">Tiếng Việt</option>
+          <option value="tl" lang="tl">Tagalog</option><option value="fr" lang="fr">Français</option></select></label>
       </div>
       <p class="connection-notice" id="connection-notice" role="status" hidden>Connection unavailable: the public guide is available. Accounts, saved profiles, chat, FEMA checks and external sites need a connection. Nothing is queued for automatic sending.</p>
     </section><noscript><p class="connection-notice">JavaScript is off. You can use the official resources below. Questionnaire, account and profile controls need JavaScript.</p><p lang="es">JavaScript está desactivado. Puede usar los recursos oficiales. Si está en peligro inmediato o tiene lesiones graves, <a href="tel:911">llame al 911</a>.</p><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> · <a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a></noscript>
     <main tabindex="-1" id="main" class="account-main">
-      <a class="back-link" href="./index.html">← Back to flood guide</a>
+      <a class="back-link" href="./index.html">← Back to HERO</a>
       <section class="question-flow account-card" aria-labelledby="account-title">
         <p class="eyebrow">Optional account</p>
         <h1 id="account-title">Your household profile</h1>
@@ -74,7 +80,7 @@
           </div>
           <div class="step-actions"><a class="primary-button" href="./plan.html">Review or edit profile</a><button class="secondary-button" id="account-logout" type="button">Sign out</button></div>
         </div>
-        <div class="profile-footer-actions"><a href="./plan.html">Continue without an account</a><a href="./index.html#help">Find help now →</a></div>
+        <div class="profile-footer-actions"><a href="./plan.html">Continue without an account</a><a href="./help.html">Find help now →</a></div>
       </section>
     </main>
     <footer><p>In immediate danger or seriously injured, call <a href="tel:911">911</a>. Finding help does not require an account.</p></footer>

@@ -1,0 +1,78 @@
+{
+  "format": "Edited browser captures with local system-voice narration",
+  "durationSeconds": 299.9,
+  "chapters": [
+    {
+      "chapter": 1,
+      "title": "A clearer next step",
+      "startSeconds": 0,
+      "durationSeconds": 30,
+      "narrationSeconds": 22.18,
+      "screenshot": "home-disasters.png"
+    },
+    {
+      "chapter": 2,
+      "title": "From need to recovery plan",
+      "startSeconds": 30,
+      "durationSeconds": 60,
+      "narrationSeconds": 56.19,
+      "screenshot": "recovery-desktop.png"
+    },
+    {
+      "chapter": 3,
+      "title": "A bounded role for Foundry",
+      "startSeconds": 90,
+      "durationSeconds": 45,
+      "narrationSeconds": 44.12,
+      "screenshot": "live-foundry.png"
+    },
+    {
+      "chapter": 4,
+      "title": "Prepare a summary for a helper",
+      "startSeconds": 135,
+      "durationSeconds": 45,
+      "narrationSeconds": 42.69,
+      "screenshot": "helper-preview.png"
+    },
+    {
+      "chapter": 5,
+      "title": "Preparedness stays personal",
+      "startSeconds": 180,
+      "durationSeconds": 45,
+      "narrationSeconds": 41.95,
+      "screenshot": "preparedness.png"
+    },
+    {
+      "chapter": 6,
+      "title": "English and Spanish",
+      "startSeconds": 225,
+      "durationSeconds": 20,
+      "narrationSeconds": 17.92,
+      "screenshot": "recovery-spanish.png"
+    },
+    {
+      "chapter": 7,
+      "title": "A cached public guide",
+      "startSeconds": 245,
+      "durationSeconds": 15,
+      "narrationSeconds": 13.32,
+      "screenshot": "offline-guide.png"
+    },
+    {
+      "chapter": 8,
+      "title": "Controlled AI failure",
+      "startSeconds": 260,
+      "durationSeconds": 25,
+      "narrationSeconds": 22.35,
+      "screenshot": "ai-unavailable.png"
+    },
+    {
+      "chapter": 9,
+      "title": "Evidence and practical limits",
+      "startSeconds": 285,
+      "durationSeconds": 15,
+      "narrationSeconds": 14.62,
+      "screenshot": null
+    }
+  ]
+}

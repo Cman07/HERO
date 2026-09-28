@@ -27,7 +27,7 @@ test('text export includes progress, complete source URLs and limits without raw
   const profile = exampleProfile({ completedTasks: ['alerts'], username: 'PRIVATE-USERNAME', householdSize: '5+' });
   const text = preparedness.checklistText(profile, profile.completedTasks, new Date('2026-09-26T12:00:00Z'));
   assert.match(text, /\[x\] Choose how/); assert.match(text, /\[ \] Make a household/);
-  assert.match(text, /1 of 9 tasks complete/); assert.match(text, /https:\/\/www.ready.gov\/floods/);
+  assert.match(text, /1 of 9 tasks complete/); assert.match(text, /https:\/\/www.ready.gov\/plan/);
   assert.match(text, /call 911/); assert.match(text, /Keep your copy private/);
   assert.doesNotMatch(text, /PRIVATE-USERNAME|Albemarle County|5\+|pregnant|disability:|updatedAt/);
 });

@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f9fa" />
+    <meta name="description" content="Find official disaster assistance across the United States, prepare your household, and review your next steps. Call 911 for immediate danger." />
+    <title>HERO — US Disaster Assistance Navigator</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/hero-shield.svg" />
+    <script src="./locales.cjs"></script>
+    <script src="./language.cjs"></script>
+    <script src="./accessibility.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="help-page">
+    <a class="skip" href="#main">Skip to main content</a>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="./index.html" aria-label="HERO home">
+          <span class="brand-mark" aria-hidden="true"><img src="./assets/hero-shield.svg" width="48" height="48" alt="" decoding="async" /></span>
+          <span>HERO<span class="brand-subtitle">US Disaster Assistance Navigator</span></span>
+        </a>
+        <nav class="header-links" aria-label="Main navigation">
+          <a href="./index.html">Home</a>
+          <a href="./help.html" aria-current="page">Find help now</a>
+          <a href="./plan.html">Plan ahead</a>
+          <a class="nav-account" id="account-nav" href="./account.html">Sign in</a>
+        </nav>
+      </div>
+    </header>
+    <section class="access-controls" aria-label="Language settings">
+      <div class="access-controls-inner">
+        <label for="language-choice"><span aria-hidden="true">🌐</span> Language <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option>
+          <option value="ar" lang="ar" dir="rtl">العربية</option>
+          <option value="zh-Hans" lang="zh-Hans">简体中文</option>
+          <option value="ko" lang="ko">한국어</option>
+          <option value="vi" lang="vi">Tiếng Việt</option>
+          <option value="tl" lang="tl">Tagalog</option><option value="fr" lang="fr">Français</option></select></label>
+      </div>
+      <p class="connection-notice" id="connection-notice" role="status" hidden>Connection unavailable: the public guide is available. Accounts, saved profiles, chat, FEMA checks and external sites need a connection. Nothing is queued for automatic sending.</p>
+    </section><noscript><p class="connection-notice">JavaScript is off. You can use the official resources below. Questionnaire, account and profile controls need JavaScript.</p><p lang="es">JavaScript está desactivado. Puede usar los recursos oficiales. Si está en peligro inmediato o tiene lesiones graves, <a href="tel:911">llame al 911</a>.</p><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> · <a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a></noscript>
+    <main tabindex="-1" id="main">
+      <section class="emergency" aria-labelledby="emergency-title"><div><h2 id="emergency-title">In immediate danger or seriously injured?</h2><p>HERO cannot contact responders. Call emergency services directly.</p></div><a class="call" href="tel:911" aria-label="Call 911 using your phone">Call 911 ↗</a></section>
+      <section class="help-map-section" aria-labelledby="map-title">
+        <p class="eyebrow">Find help now</p><h1 id="map-title">Explore resources near a ZIP area</h1>
+        <div class="map-layout"><div class="map-panel">
+          <form id="map-zip-form" class="map-zip-form" novalidate>
+            <div class="map-zip-field"><label class="location-field" for="map-zip">Current ZIP code</label>
+              <input class="location-input" id="map-zip" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" placeholder="e.g. 22902" aria-describedby="map-zip-hint map-zip-feedback" aria-invalid="false" /></div>
+            <button class="primary-button" type="submit">Show resources near this ZIP</button>
+            <p id="map-zip-hint" class="quiet-note">We use your ZIP only to look up an approximate area. No street address is needed.</p>
+            <p id="map-zip-feedback" role="status" aria-live="polite"></p>
+          </form>
+          <p id="map-example-note" class="quiet-note">Charlottesville, Virginia is an example view, not your location. Enter your ZIP above to update the map.</p>
+          <div id="resource-map" class="resource-map" role="img" aria-label="Map of resource locations"></div>
+          </div>
+          <div class="map-resource-list" role="region" aria-label="Resource locations list" tabindex="0"><h2>Resource locations</h2><p id="map-status" role="status" aria-live="polite">Loading example locations…</p><details class="map-source-details"><summary>Data sources and check times</summary><p id="map-source-status" class="location-count"></p></details><p class="quiet-note">Hospitals and fire/EMS stations are directory locations, not confirmed disaster aid. FEMA listings must be checked before travel. In immediate danger, call 911.</p><ul id="map-resource-items" class="resource-pin-list"></ul></div></div>
+        <p class="location-count">Map tiles © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>. Map data may be unavailable; the list remains usable.</p>
+      </section>
+      <div class="question-reveal" id="help-reveal">
+          <section class="chat-panel" id="chat-panel" aria-labelledby="chat-heading">
+          <p class="eyebrow">AI assistance</p>
+            <h2 id="chat-heading">HERO AI assistant</h2>
+          <p class="ai-state" id="ai-state" role="status">Not checked</p>
+          <p>Ask HERO about disaster assistance at any time. Complete the survey for a tailored recovery plan.</p>
+          <p id="chat-emergency" class="quiet-note" role="alert" hidden>If you may be in immediate danger or seriously injured, <a href="tel:911">call 911 directly</a>. This chat cannot contact responders. <button class="secondary-button" type="button" data-restart>Start over</button></p>
+          <p class="chat-note">Nonemergency questions go to Azure AI. Keep private health and identifying details out of messages.</p>
+          <details class="chat-privacy"><summary>How HERO uses your information</summary><p class="chat-note">Your completed questionnaire answers are kept in this browser tab so you can continue after a refresh. For nonemergency chats, your messages and any survey answers are sent to Azure AI. Urgent guidance is handled without AI. This guide does not save chat history. If you opt in above after completing the survey, only saved home ZIP and household size are included. Saved health, disability, and other support answers stay local. The chat cannot verify your location or check eligibility, live conditions, or application availability. Keep private health and identifying details out of messages.</p></details>
+          <div class="chat-log" id="chat-log" role="log" aria-label="Chat messages" aria-live="polite" aria-relevant="additions text"></div>
+          <button class="secondary-button" id="chat-retry" type="button" hidden>Ask HERO / retry</button>
+          <p class="chat-status" id="chat-status" role="status" aria-live="polite"></p>
+          <form class="chat-form" id="chat-form">
+            <label for="chat-input">Ask HERO a question</label>
+            <textarea dir="auto" id="chat-input" maxlength="1000" placeholder="For example: Where can I ask about temporary housing?"></textarea>
+            <div class="step-actions"><button class="primary-button" id="chat-send" type="submit">Send message</button><button class="secondary-button" id="chat-clear" type="button">Clear conversation</button></div>
+          </form>
+          </section>
+      <section class="question-flow" id="help-questions" aria-label="Find help now questions">
+        <div class="step" id="danger-step">
+          <p class="step-count">Question 1 of 4</p>
+          <h2 tabindex="-1">Are you in immediate danger or seriously injured?</h2>
+          <p>If you need emergency help, call 911 directly. This site cannot contact responders.</p>
+          <div class="choices">
+            <button class="choice" type="button" data-danger="yes">Yes</button>
+            <button class="choice" type="button" data-danger="unsure">I'm not sure</button>
+            <button class="choice" type="button" data-danger="no">No</button>
+          </div>
+        </div>
+        <div class="step" id="emergency-step" hidden>
+          <h2 tabindex="-1">Call 911 for immediate help</h2>
+          <p>If you are in danger, seriously injured, or unsure whether you need emergency help, call 911. This guide cannot assess an emergency or contact responders for you.</p>
+          <div class="step-actions emergency-actions"><a class="action" href="tel:911">Call 911</a><button class="secondary-button" type="button" data-emergency-continue>Continue</button></div>
+        </div>
+        <div class="step" id="location-step" hidden>
+          <p class="step-count">Question 2 of 4</p>
+          <h2 tabindex="-1">Where are you right now?</h2>
+          <p>Enter your current five-digit ZIP. A ZIP locates an approximate area, not an address. This may differ from your home or damage location. You can skip if you do not know it.</p>
+          <form id="location-form" novalidate>
+            <div class="quiet-note" id="saved-home-choice" hidden>
+              <p id="saved-home-text"></p>
+              <button class="secondary-button" id="use-home-zip" type="button">Use my saved home ZIP</button>
+            </div>
+            <label class="location-field" for="locality-search">Current ZIP code</label>
+            <input class="location-input" id="locality-search" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" placeholder="e.g. 22902" aria-describedby="location-hint location-count location-error" aria-invalid="false" />
+            <p class="location-count" id="location-count" role="status" aria-live="polite"></p>
+            <p id="location-hint">We use your ZIP only to look up an approximate area. No street address is needed.</p>
+            <p class="form-error" id="location-error" role="alert" hidden></p>
+            <div class="step-actions">
+              <button class="primary-button" type="submit">Continue</button>
+              <button class="secondary-button" id="skip-location" type="button">I don't know / skip</button>
+              <button class="secondary-button" type="button" data-back="danger-step">Back</button>
+            </div>
+          </form>
+        </div>
+        <div class="step" id="disaster-step" hidden>
+          <p class="step-count">Question 3 of 4</p><h2 tabindex="-1">What kind of disaster affected you?</h2>
+          <p>Select the closest type. HERO uses this with your ZIP and help need to organize next steps; it does not confirm a declaration or eligibility.</p>
+          <div class="choices disaster-choices">
+            <button class="choice" type="button" data-disaster="flood">Flood</button>
+            <button class="choice" type="button" data-disaster="hurricane">Hurricane or tropical storm</button>
+            <button class="choice" type="button" data-disaster="wildfire">Wildfire</button>
+            <button class="choice" type="button" data-disaster="severe-storm">Tornado or severe storm</button>
+            <button class="choice" type="button" data-disaster="winter-storm">Winter storm</button>
+            <button class="choice" type="button" data-disaster="earthquake">Earthquake</button>
+            <button class="choice" type="button" data-disaster="other">Other or not sure</button>
+          </div><div class="step-actions"><button class="secondary-button" type="button" data-back="location-step">Back</button></div>
+        </div>
+        <div class="step" id="need-step" hidden>
+          <p class="step-count">Question 4 of 4</p>
+          <h2 tabindex="-1">What kind of help are you looking for?</h2>
+          <p id="need-description">Choose the closest option to see official next steps. You can also ask a follow-up question in the chat.</p>
+          <div class="quiet-note" id="household-context-choice" hidden>
+            <p id="household-context-summary"></p>
+            <label class="context-choice"><input id="use-profile" type="checkbox" /><span>Share only my saved home ZIP and household size with Azure AI alongside today's answers. Saved health and support details stay local.</span></label>
+          </div>
+          <p id="profile-load-note" class="quiet-note" hidden></p>
+          <div class="choices">
+            <button class="choice" type="button" data-need="A place to stay">A place to stay<span class="choice-arrow" aria-hidden="true">↗</span></button>
+            <button class="choice" type="button" data-need="Food or basic supplies">Food or basic supplies<span class="choice-arrow" aria-hidden="true">↗</span></button>
+            <button class="choice" type="button" data-need="Help after property damage">Help after property damage<span class="choice-arrow" aria-hidden="true">↗</span></button>
+            <button class="choice" type="button" data-need="In-person assistance">In-person assistance<span class="choice-arrow" aria-hidden="true">↗</span></button>
+            <button class="choice" type="button" data-need="Something else / not sure">Something else / not sure<span class="choice-arrow" aria-hidden="true">↗</span></button>
+          </div>
+          <div class="step-actions"><button class="secondary-button" type="button" data-back="disaster-step">Back</button></div>
+        </div>
+        <div class="step" id="summary-step" hidden>
+          <h2 tabindex="-1">Your recovery plan</h2>
+          <div id="result-emergency" class="result-emergency" role="alert" hidden><p>If you are in danger, seriously injured, or unsure whether you need emergency help, call 911. This guide cannot assess an emergency or contact responders for you.</p><a class="action emergency-action" href="tel:911">Call 911</a></div>
+          <div class="result-context"><p id="summary-text"></p><button class="text-button" type="button" data-back="need-step">Edit your answers</button></div>
+          <section id="recovery-plan" aria-labelledby="recovery-heading">
+            <div class="recovery-first" id="recovery-first" data-original-language></div>
+            <p id="recovery-progress" role="status" data-original-language></p>
+            <p id="recovery-progress-note" class="location-count">Progress is reported by you and kept in this tab. It does not confirm an agency action.</p>
+            <h3 id="recovery-heading">Do next</h3>
+            <ol class="recovery-actions" id="recovery-next" data-original-language></ol>
+            <h3>Prepare for your conversation</h3>
+            <ol class="recovery-actions" id="recovery-prepare" data-original-language></ol>
+            <p class="referral-caveat">Agencies determine eligibility. Confirm application availability and center details directly.</p>
+            <div class="step-actions">
+              <button class="primary-button" id="recovery-print-button" type="button">Print / Save as PDF</button>
+              <button class="secondary-button" id="recovery-download" type="button">Download plan text</button>
+              <button class="secondary-button" id="helper-open" type="button" aria-expanded="false" aria-controls="helper-panel">Prepare a summary for a helper</button>
+            </div>
+            <details class="checklist-export" id="recovery-text-fallback"><summary>Plan text / copy</summary><label class="sr-only" for="recovery-text">Recovery plan text</label><textarea id="recovery-text" rows="12" readonly></textarea><button class="text-button" id="recovery-select" type="button">Select plan text</button></details>
+            <p id="recovery-export-status" role="status"></p>
+          </section>
+          <section id="helper-panel" class="helper-panel" aria-labelledby="helper-heading" hidden>
+            <h3 id="helper-heading" tabindex="-1">Review your summary for a helper</h3>
+            <p>Review and edit the exact text before you share it. Exporting does not contact a helper or reserve assistance.</p>
+            <p class="quiet-note">Saved health, disability and support answers and your chat are excluded. Edits stay on this page and are not sent to AI. Keep identifying and private medical details out of this summary.</p>
+            <fieldset id="helper-profile-options" hidden><legend>Optional saved household details</legend>
+              <label class="context-choice"><input type="checkbox" id="helper-include-home" /><span id="helper-home-label" data-original-language></span></label>
+              <label class="context-choice"><input type="checkbox" id="helper-include-size" /><span id="helper-size-label" data-original-language></span></label>
+            </fieldset>
+            <label class="location-field" for="helper-questions">Questions you want to ask</label>
+            <textarea class="summary-editor" dir="auto" id="helper-questions" maxlength="2000" rows="3" placeholder="What do you still need help understanding?"></textarea>
+            <button class="secondary-button" id="helper-rebuild" type="button">Rebuild summary from current plan</button>
+            <p class="location-count">Rebuilding replaces edits in the preview below. Your questions above are kept.</p>
+            <p id="helper-change-notice" class="quiet-note" role="status" hidden>Your plan or selections changed. Rebuild the summary to include them, or export the draft you have reviewed.</p>
+            <label class="location-field" for="helper-preview">Exact summary to print or download</label>
+            <textarea class="summary-editor" id="helper-preview" rows="16" maxlength="18000" spellcheck="true"></textarea>
+            <div class="step-actions"><button class="primary-button" id="helper-print" type="button">Print summary / Save as PDF</button><button class="secondary-button" id="helper-download" type="button">Download summary text</button><button class="secondary-button" id="helper-select" type="button">Select summary text</button></div>
+            <p id="helper-export-status" role="status"></p>
+          </section>
+          <details class="official-details"><summary>Official resources and guidance limits</summary><section class="referral-panel" aria-labelledby="referral-heading">
+            <h3 id="referral-heading">Official places to start</h3>
+            <p id="referral-context">These links can help you check current options directly.</p>
+            <ol class="referral-list" id="referral-list">
+              <li><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a><p>Explore assistance and the official application route.</p></li>
+              <li><a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Disaster Recovery Center locator</a><p>Check for an in-person center and its current details.</p></li>
+            </ol>
+            <p id="referral-location-note"></p>
+            <p class="referral-caveat">Assistance agencies determine eligibility. Check each official site for current applications, center availability, hours, and services.</p>
+          </section>
+          </details>
+          <section class="private-reminders" id="private-reminders" hidden aria-labelledby="private-reminders-title">
+            <h3 id="private-reminders-title">Your private household reminders</h3>
+            <p>These come from your saved answers and are not sent to the AI. Review whether they still apply. When speaking directly with a representative through the official resources above, explain any support your household needs.</p>
+            <ul id="private-reminders-list"></ul>
+            <a href="./plan.html">Review or edit your household profile</a>
+          </section>
+          <section class="referral-panel declaration-panel" id="declaration-panel" aria-labelledby="declarations-heading">
+            <h3 id="declarations-heading">FEMA declaration context</h3>
+            <p>Enter a separate damage ZIP and confirm the county offered by Census ZIP-area data. This optional check sends only the confirmed public county code to FEMA, not your profile or chat.</p>
+            <form id="damage-locality-form">
+              <label class="location-field" for="damage-search">Damage ZIP code</label>
+              <input class="location-input" id="damage-search" type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" placeholder="Five-digit ZIP" aria-describedby="damage-count damage-error" aria-invalid="false" />
+              <p id="damage-count" class="location-count" role="status"></p>
+              <label class="location-field" for="damage-county">Confirm the county or county equivalent where damage occurred</label>
+              <select id="damage-county" class="location-input" disabled><option value="">Enter a damage ZIP first</option></select>
+              <p class="quiet-note">ZIP areas can cross county boundaries. If no candidate is available, declaration status stays unknown; check FEMA's official source.</p>
+              <p id="damage-error" class="form-error" role="alert" hidden></p>
+              <div class="step-actions"><button class="secondary-button" id="check-declarations" type="submit">Check FEMA records</button></div>
+            </form>
+            <p id="declaration-status" role="status" aria-live="polite">No damage ZIP and county confirmed. Declaration status unknown.</p>
+            <p id="declaration-checked"></p>
+            <p class="quiet-note">These are historical declaration records for all incident types. Match incident dates and details with an official representative. A declaration or program designation does not establish your eligibility, confirm applications are open, or show current conditions.</p>
+            <ul class="declaration-list" id="declaration-list" lang="en" aria-label="FEMA declaration records"></ul>
+            <a href="https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2">Source: OpenFEMA Disaster Declarations Summaries</a>
+          </section>
+          <div class="step-actions">
+            <button class="secondary-button" type="button" data-back="need-step">Back</button>
+            <button class="secondary-button" id="summary-chat-continue" type="button" data-continue-chat>Ask a follow-up question</button>
+          </div>
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <section class="resources" aria-labelledby="resources-title">
+      <div class="resources-inner">
+        <p class="eyebrow">Go straight to the source</p>
+        <h2 id="resources-title">Official resources, clear next steps.</h2>
+        <p>Open the official site to check current details directly.</p>
+        <ul class="resource-list">
+          <li><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov<span>Find and apply for federal disaster assistance.</span><span class="resource-cta">Visit official site ↗</span></a></li>
+          <li><a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator<span>Check whether an in-person center is available near you.</span><span class="resource-cta">Visit official site ↗</span></a></li>
+        </ul>
+      </div>
+    </section>
+    <footer>
+      <p>Official links reviewed September 25, 2026. This page does not check live alerts, evacuation orders, center hours, or assistance status.</p>
+      <p>This independent guide does not determine whether you qualify for assistance.</p>
+    </footer>
+    <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css" />
+    <script src="./assets/vendor/leaflet/leaflet.js"></script>
+    <script src="./referrals.cjs"></script>
+    <script src="./preparedness.cjs"></script>
+    <script src="./profile.cjs"></script>
+    <section id="recovery-print-view" aria-hidden="true"><pre id="recovery-print-text"></pre></section>
+    <script src="./recovery.cjs"></script>
+    <script src="./recovery-ui.js"></script>
+    <script src="./help.js"></script>
+  </body>
+</html>

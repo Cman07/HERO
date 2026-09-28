@@ -1,15 +1,14 @@
 // F6: curated preparation tasks, reviewed 2026-09-26. No AI or live conditions.
 const sources = {
-  flood: { name: 'Ready.gov — Floods', url: 'https://www.ready.gov/floods' },
   plan: { name: 'Ready.gov — Make a plan', url: 'https://www.ready.gov/plan' },
   kit: { name: 'Ready.gov — Build a kit', url: 'https://www.ready.gov/kit' },
   access: { name: 'Ready.gov — People with disabilities', url: 'https://www.ready.gov/disability' },
   pets: { name: 'Ready.gov — Prepare your pets', url: 'https://www.ready.gov/pets' }
 };
 const tasks = [
-  { id: 'alerts', title: 'Choose how you will receive official alerts', detail: 'Review emergency alert options and make sure your household can receive and understand warnings.', source: sources.flood },
+  { id: 'alerts', title: 'Choose how you will receive official alerts', detail: 'Review emergency alert options and make sure your household can receive and understand warnings.', source: sources.plan },
   { id: 'contacts', title: 'Make a household communication plan', detail: 'Choose emergency contacts and meeting places. Keep a copy of the contact plan where your household can find it.', source: sources.plan },
-  { id: 'routes', title: 'Review routes and places to go', detail: 'Learn and practice your evacuation routes and shelter plan in advance. Follow official instructions during an emergency; this checklist does not identify safe routes or open shelters.', source: sources.flood },
+  { id: 'routes', title: 'Review routes and places to go', detail: 'Learn and practice your evacuation routes and shelter plan in advance. Follow official instructions during an emergency; this checklist does not identify safe routes or open shelters.', source: sources.plan },
   { id: 'supplies', title: 'Gather and review emergency supplies', detail: 'Use the official kit guide to plan food, water, lighting and other supplies for your household. Review the kit regularly.', source: sources.kit },
   { id: 'household-support', title: 'Discuss household care and support', detail: 'Agree with trusted people on who can help with household care, communication and supplies. Include caregivers in the plan when appropriate.', source: sources.plan, when: ['pregnant', 'children', 'olderAdults'] },
   { id: 'access-support', title: 'Plan accessible communication and practical assistance', detail: 'Create a support network and discuss help with communication, mobility and assistive devices before an emergency.', source: sources.access, when: ['disability', 'mobility', 'olderAdults'] },

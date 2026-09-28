@@ -1,0 +1,43 @@
+HERO — Summary for a helper
+Prepared: 2026-09-27
+Language: English
+
+Help requested: Help after property damage
+Current locality: Fairfax city
+Damage locality: Not provided
+
+In immediate danger or seriously injured, call 911. HERO cannot contact responders.
+General guidance. Agencies determine eligibility. Confirm application availability and center details directly.
+Progress is reported by you; it does not confirm an agency action.
+
+Remaining actions
+[ ] Confirm where the damage occurred
+Keep the damage location distinct from where you are now and where you usually live. You can optionally check FEMA declaration context below; a declaration is not an eligibility decision.
+Why this step: Your current locality may differ from the place where damage happened.
+Source: DisasterAssistance.gov — https://www.disasterassistance.gov/
+Guidance reviewed: 2026-09-26
+
+[ ] Review what information to prepare privately
+Review the application checklist on the official site before applying. Gather the information it requests privately; HERO does not collect documents, identifiers or financial details.
+Why this step: Preparing from the official checklist can make the application conversation easier.
+Source: DisasterAssistance.gov — https://www.disasterassistance.gov/
+Guidance reviewed: 2026-09-26
+
+[ ] Prepare questions about your next step
+Use a recovery center, if available, to ask about unclear requirements or follow-up. Confirm center details directly before traveling.
+Why this step: A representative should resolve questions about your individual application.
+Source: FEMA Disaster Recovery Center locator — https://egateway.fema.gov/ESF6/DRCLocator
+Guidance reviewed: 2026-09-26
+
+Completed (reported by you)
+[x] Review the official application route
+Use DisasterAssistance.gov to check application information and current options. The agency determines eligibility and whether an application is available.
+Why this step: You reported property damage. The official application route explains how to ask for assistance.
+Source: DisasterAssistance.gov — https://www.disasterassistance.gov/
+Guidance reviewed: 2026-09-26
+
+
+Questions for a helper
+Which information should I prepare before speaking with a representative?
+
+Keep this copy private. Downloading or printing does not contact a helper or reserve assistance.

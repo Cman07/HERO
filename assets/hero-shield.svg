@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 600" fill="none">
+  <title>HERO yellow shield</title>
+  <desc>A warm yellow shield with a rounded navy border, an inset white shield outline, and a subtle flat yellow highlight.</desc>
+  <defs>
+    <path id="shield" d="M256 32C200 64 139 85 58 87C48 87 42 94 42 105V259C42 402 122 502 246 557C252 560 260 560 266 557C390 502 470 402 470 259V105C470 94 464 87 454 87C373 85 312 64 256 32Z"/>
+  </defs>
+  <use href="#shield" fill="#FFD34D" stroke="#153247" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M69 108C137 104 195 88 245 64" stroke="#FFE58A" stroke-width="10" stroke-linecap="round"/>
+  <use href="#shield" transform="translate(256 299) scale(.82) translate(-256 -296)" stroke="#EFC03E" stroke-width="15" stroke-linejoin="round"/>
+  <use href="#shield" transform="translate(256 296) scale(.82) translate(-256 -296)" stroke="#FFFFFF" stroke-width="14" stroke-linejoin="round"/>
+</svg>

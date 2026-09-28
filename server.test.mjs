@@ -30,7 +30,7 @@ test('keeps official resources available when chat is not configured', async () 
     const plan = await fetch(`${base}/plan.html`);
     assert.equal(plan.status, 200);
     assert.match(await plan.text(), /id="profile-form"/);
-    for (const asset of ['styles.css', 'app.js', 'plan.js', 'locality-picker.js', 'localities.cjs', 'referrals.cjs', 'profile.cjs']) {
+    for (const asset of ['styles.css', 'app.js', 'plan.js', 'locality-picker.js', 'localities.cjs', 'referrals.cjs', 'profile.cjs', 'recovery.cjs', 'recovery-ui.js']) {
       const response = await fetch(`${base}/${asset}`);
       assert.equal(response.status, 200, `${asset} should be served`);
       assert.match(response.headers.get('content-type'), /(?:javascript|css)/);
@@ -46,13 +46,13 @@ test('passes questionnaire context and chat to Azure without exposing the key in
   await withServer({ env, fetchImpl: async (url, options) => {
     call = { url: String(url), options };
     calls.push(call);
-    return new Response(JSON.stringify({ choices: [{ message: { content: 'Open the official assistance site.' } }] }), { status: 200 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ reply: 'Open the official assistance site.', actionIds: [] }) } }] }), { status: 200 });
   } }, async base => {
     const response = await fetch(`${base}/api/chat`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(validBody)
     });
     assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), { reply: 'Open the official assistance site.' });
+    assert.deepEqual(await response.json(), { reply: 'Open the official assistance site.', actionIds: [], mode: 'ai' });
     const followup = await fetch(`${base}/api/chat`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...validBody, messages: [...validBody.messages,
@@ -89,7 +89,7 @@ test('accepts only a selected Virginia county or independent city', async () => 
   let calls = 0;
   await withServer({ env, fetchImpl: async () => {
     calls++;
-    return new Response(JSON.stringify({ choices: [{ message: { content: 'Check the official site.' } }] }), { status: 200 });
+    return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ reply: 'Check the official site.', actionIds: [] }) } }] }), { status: 200 });
   } }, async base => {
     const list = await fetch(`${base}/localities.cjs`);
     assert.equal(list.status, 200);
@@ -121,7 +121,7 @@ test('profile endpoints isolate browsers, reject cross-origin writes, and exclud
   try {
     await withServer({ env, profileStore: store, fetchImpl: async (url, options) => {
       calls.push(JSON.parse(options.body));
-      return new Response(JSON.stringify({ choices: [{ message: { content: 'Check the official resources.' } }] }));
+      return new Response(JSON.stringify({ choices: [{ message: { content: JSON.stringify({ reply: 'Check the official resources.', actionIds: [] }) } }] }));
     } }, async base => {
       const headers = { 'Content-Type': 'application/json', 'X-HERO-Profile': '1' };
       const save = async (body, extra = {}) => fetch(`${base}/api/profile`, { method: 'PUT', headers: { ...headers, ...extra }, body: JSON.stringify(body) });
@@ -146,12 +146,12 @@ test('profile endpoints isolate browsers, reject cross-origin writes, and exclud
       });
       assert.equal((await chat(cookieA, true)).status, 200);
       assert.match(calls.at(-1).messages[1].content, /Albemarle County/);
-      assert.match(calls.at(-1).messages[1].content, /Fairfax city/);
+      assert.doesNotMatch(calls.at(-1).messages[1].content, /Fairfax city/);
       assert.match(calls.at(-1).messages[1].content, /"householdSize":"4"/);
       for (const { key } of schema.profileQuestions) assert.equal(JSON.stringify(calls.at(-1)).includes(`"${key}"`), false, `${key} must remain local`);
       assert.doesNotMatch(JSON.stringify(calls.at(-1)), /INJECTED|someone-else|not part of the schema/);
       assert.equal((await chat(cookieB, true)).status, 200);
-      assert.match(calls.at(-1).messages[1].content, /Richmond city/);
+      assert.doesNotMatch(calls.at(-1).messages[1].content, /Richmond city/);
       assert.doesNotMatch(calls.at(-1).messages[1].content, /Fairfax city/);
       assert.equal((await chat(cookieA, false)).status, 200);
       assert.doesNotMatch(calls.at(-1).messages[1].content, /Saved household context|Fairfax city/);
@@ -184,7 +184,7 @@ test('signed-in profiles are private, survive new sessions, and keep sensitive f
   let payload;
   try {
     await withServer({ env: { ...env, NODE_ENV: 'production' }, profileStore: profiles, accountStore: accounts,
-      fetchImpl: async (url, options) => { payload = JSON.parse(options.body); return Response.json({ choices: [{ message: { content: 'Check the official site.' } }] }); }
+      fetchImpl: async (url, options) => { payload = JSON.parse(options.body); return Response.json({ choices: [{ message: { content: JSON.stringify({ reply: 'Check the official site.', actionIds: [] }) } }] }); }
     }, async base => {
       const headers = { 'Content-Type': 'application/json', 'X-HERO-Account': '1', 'X-HERO-Profile': '1' };
       const post = (path, body = {}, cookie, extra = {}) => fetch(base + path, { method: 'POST', headers: { ...headers, ...(cookie ? { Cookie: cookie } : {}), ...extra }, body: JSON.stringify(body) });
@@ -214,7 +214,7 @@ test('signed-in profiles are private, survive new sessions, and keep sensitive f
       assert.equal((await read(cookieA)).profile.householdSize, '3');
       assert.equal((await save({ ...profile, householdSize: '4' }, cookieA)).status, 200);
       assert.equal((await post('/api/chat', { ...validBody, useProfile: true, accountId: 'resident-b' }, cookieA)).status, 200);
-      assert.match(payload.messages[1].content, /Fairfax city/);
+      assert.doesNotMatch(payload.messages[1].content, /Fairfax city/);
       assert.match(payload.messages[1].content, /"householdSize":"4"/);
       assert.doesNotMatch(JSON.stringify(payload), /resident-a|resident-b|Richmond city/);
       for (const { key } of schema.profileQuestions) assert.equal(JSON.stringify(payload).includes(`"${key}"`), false);
@@ -341,7 +341,7 @@ test('checklist progress is owner-scoped, preserves profile edits, prunes obsole
   let payload;
   try {
     await withServer({ env, profileStore: profiles, accountStore: accounts,
-      fetchImpl: async (url, options) => { payload = JSON.parse(options.body); return Response.json({ choices: [{ message: { content: 'Check official guidance.' } }] }); }
+      fetchImpl: async (url, options) => { payload = JSON.parse(options.body); return Response.json({ choices: [{ message: { content: JSON.stringify({ reply: 'Check official guidance.', actionIds: [] }) } }] }); }
     }, async base => {
       const headers = { 'Content-Type': 'application/json', 'X-HERO-Profile': '1' };
       const saveTask = (body, token = tokenA, extra = {}) => fetch(base + '/api/checklist', { method: 'PUT', headers: { ...headers, Cookie: 'hero_profile=' + token, ...extra }, body: JSON.stringify(body) });

@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-09-27T16:14:05.134Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 1859,
+      "status": 200,
+      "valid": true,
+      "reply": "The next step is to confirm where the property damage occurred. This is important because your current location may differ from the damage site, and assistance eligibility depends on the damage locality. Could you please tell me which county or independent city in Virginia the damage happened?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "tl",
+      "elapsedMs": 1171,
+      "status": 200,
+      "valid": true,
+      "reply": "Mahalagang kumpirmahin kung saan nangyari ang pinsala—ang lugar kung saan nagkaroon ng pinsala ay maaaring iba sa iyong kasalukuyang lokasyon. Ito ay tumutulong sa pagproseso ng aplikasyon at pagtukoy ng pagiging karapat-dapat. Maaari mo ring ihanda nang pribado ang mga dokumento o impormasyon na kailangan para sa aplikasyon upang mapabilis ang proseso. Ano ang county o independent city kung saan naging sanhi ang pinsala?",
+      "actionIds": [
+        "damage-locality",
+        "damage-prepare"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

@@ -1,4 +1,16 @@
-// F8: bundled editorial Spanish UI copy. No remote translation or personal data.
+// Bundled public interface copy. Translation never reads resident inputs.
+const localePacks = typeof module !== 'undefined' ? require('./locales.cjs') : window.heroLocalePacks;
+const languages = {
+ en: { name: 'English', nativeName: 'English', dir: 'ltr' },
+ es: { name: 'Spanish', nativeName: 'Español', dir: 'ltr' },
+ ar: { name: 'Modern Standard Arabic', nativeName: 'العربية', dir: 'rtl' },
+ 'zh-Hans': { name: 'Simplified Chinese', nativeName: '简体中文', dir: 'ltr' },
+ ko: { name: 'Korean', nativeName: '한국어', dir: 'ltr' },
+ vi: { name: 'Vietnamese', nativeName: 'Tiếng Việt', dir: 'ltr' },
+ tl: { name: 'Tagalog (Filipino)', nativeName: 'Tagalog', dir: 'ltr' },
+ fr: { name: 'French', nativeName: 'Français', dir: 'ltr' }
+};
+const normalizeLanguage = code => Object.hasOwn(languages, code) ? code : 'en';
 const spanish = Object.fromEntries(`
 Skip to main content|Saltar al contenido principal
 Virginia Flood Guide|Guía de inundaciones de Virginia
@@ -17,12 +29,13 @@ Call 911 ↗|Llamar al 911 ↗
 Call 911|Llamar al 911
 Call 911 using your phone|Llamar al 911 desde su teléfono
 A guide for Virginia residents|Una guía para residentes de Virginia
-Flood assistance|Ayuda por inundaciones
+Disaster assistance|Ayuda ante desastres
 in|en
 Virginia.|Virginia.
-A clearer next step, for you and your household. Find official help after a flood or get prepared before one.|Un próximo paso más claro para usted y su hogar. Encuentre ayuda oficial después de una inundación o prepárese antes.
+A clearer next step, for you and your household. Find official help after a disaster or prepare your household for an emergency.|Un próximo paso más claro para usted y su hogar. Encuentre ayuda oficial después de un desastre o prepare su hogar para una emergencia.
+For hurricanes, floods, wildfires, severe storms and other disasters.|Para huracanes, inundaciones, incendios forestales, tormentas fuertes y otros desastres.
 Choose where to start|Elija por dónde empezar
-After a flood|Después de una inundación
+After a disaster|Después de un desastre
 Three short questions. Official resources and a conversation about next steps.|Tres preguntas breves. Recursos oficiales y una conversación sobre los próximos pasos.
 Before an emergency|Antes de una emergencia
 Build a household profile and a preparedness checklist you can return to.|Cree un perfil del hogar y una lista de preparación que pueda volver a consultar.
@@ -42,7 +55,7 @@ No|No
 Call 911 for immediate help|Llame al 911 para recibir ayuda inmediata
 If you are in danger, seriously injured, or unsure whether you need emergency help, call 911. This guide cannot assess an emergency or contact responders for you.|Si está en peligro, tiene lesiones graves o no sabe si necesita ayuda de emergencia, llame al 911. Esta guía no puede evaluar una emergencia ni contactar a los servicios de emergencia por usted.
 Where are you right now?|¿Dónde está ahora?
-Choose the Virginia county or independent city where you are now. This may differ from where you live or where flooding caused damage. You can skip this question.|Elija el condado o la ciudad independiente de Virginia donde está ahora. Puede ser diferente de donde vive o donde hubo daños por inundación. Puede omitir esta pregunta.
+Choose the Virginia county or independent city where you are now. This may differ from where you live or where the disaster caused damage. You can skip this question.|Elija el condado o la ciudad independiente de Virginia donde está ahora. Puede ser diferente de donde vive o donde el desastre causó daños. Puede omitir esta pregunta.
 I'm at my saved home locality now|Ahora estoy en la localidad de mi hogar guardado
 Select your current Virginia locality|Seleccione su localidad actual en Virginia
 Type or choose a locality|Escriba o elija una localidad
@@ -95,7 +108,7 @@ FEMA Recovery Center locator|Localizador de centros de recuperación de FEMA
 Check whether an in-person center is available near you.|Compruebe si hay un centro presencial cerca de usted.
 Official links reviewed September 25, 2026. This page does not check live alerts, evacuation orders, center hours, or assistance status.|Enlaces oficiales revisados el 25 de septiembre de 2026. Esta página no consulta alertas en vivo, órdenes de evacuación, horarios de centros ni el estado de la ayuda.
 This independent guide does not determine whether you qualify for assistance.|Esta guía independiente no determina si usted reúne los requisitos para recibir ayuda.
-← Back to flood guide|← Volver a la guía de inundaciones
+← Back to HERO|← Volver a HERO
 A little preparation, more peace of mind|Un poco de preparación, más tranquilidad
 Your plan.|Su plan.
 Take a few minutes to record what your household may need. Every question is optional. You can find help without a profile.|Dedique unos minutos a registrar lo que su hogar podría necesitar. Todas las preguntas son opcionales. Puede buscar ayuda sin un perfil.
@@ -329,7 +342,52 @@ call 911 directly|llame directamente al 911
 . This chat cannot contact responders.|. Este chat no puede contactar a los servicios de emergencia.
 AI assistance is unavailable right now. Use the official resources or speak with a representative.|La ayuda de IA no está disponible ahora. Use los recursos oficiales o hable con un representante.
 `.trim().split('\n').map(line => line.split('|')));
+Object.assign(spanish, Object.fromEntries(`Rebuild the summary to apply your household-detail selections before exporting.|Reconstruya el resumen para aplicar sus selecciones de datos del hogar antes de exportar.
+HERO explains your recovery plan and may ask one follow-up question.|HERO explica su plan de recuperación y puede hacer una pregunta de seguimiento.
+Ask HERO / retry|Preguntar a HERO / reintentar
+HERO home|Inicio de HERO
+Virginia Disaster Assistance Navigator|Orientación sobre ayuda ante desastres en Virginia
+HERO — Virginia Disaster Assistance Navigator|HERO — Orientación sobre ayuda ante desastres en Virginia
+Plan ahead — HERO — Virginia Disaster Assistance Navigator|Prepararse — HERO — Orientación sobre ayuda ante desastres en Virginia
+Your account — HERO — Virginia Disaster Assistance Navigator|Su cuenta — HERO — Orientación sobre ayuda ante desastres en Virginia
+Your recovery plan|Su plan de recuperación
+Edit your answers|Editar sus respuestas
+Do next|Pasos siguientes
+Prepare for your conversation|Prepárese para la conversación
+Progress is reported by you and kept in this tab. It does not confirm an agency action.|Usted indica el progreso y se guarda en esta pestaña. No confirma ninguna acción de una agencia.
+Agencies determine eligibility. Confirm application availability and center details directly.|Las agencias determinan la elegibilidad. Confirme directamente la disponibilidad de solicitudes y los detalles de los centros.
+Print / Save as PDF|Imprimir / Guardar como PDF
+Download plan text|Descargar el texto del plan
+Prepare a summary for a helper|Preparar un resumen para una persona que le ayude
+Plan text / copy|Texto del plan / copiar
+Recovery plan text|Texto del plan de recuperación
+Select plan text|Seleccionar el texto del plan
+Review your summary for a helper|Revise el resumen para una persona que le ayude
+Review and edit the exact text before you share it. Exporting does not contact a helper or reserve assistance.|Revise y edite el texto exacto antes de compartirlo. Exportar no contacta a nadie ni reserva ayuda.
+Saved health, disability and support answers and your chat are excluded. Edits stay on this page and are not sent to AI. Keep identifying and private medical details out of this summary.|Se excluyen sus respuestas guardadas sobre salud, discapacidad y apoyo, y su chat. Las ediciones permanecen en esta página y no se envían a la IA. No incluya datos de identificación ni datos médicos privados en este resumen.
+Optional saved household details|Datos guardados del hogar opcionales
+Questions you want to ask|Preguntas que desea hacer
+What do you still need help understanding?|¿Qué necesita todavía entender mejor?
+Rebuild summary from current plan|Reconstruir el resumen con el plan actual
+Rebuilding replaces edits in the preview below. Your questions above are kept.|Reconstruir reemplaza las ediciones de la vista previa. Se conservan sus preguntas de arriba.
+Your plan or selections changed. Rebuild the summary to include them, or export the draft you have reviewed.|Su plan o sus selecciones cambiaron. Reconstruya el resumen para incluirlos o exporte el borrador que ha revisado.
+Exact summary to print or download|Resumen exacto para imprimir o descargar
+Print summary / Save as PDF|Imprimir resumen / Guardar como PDF
+Download summary text|Descargar el texto del resumen
+Select summary text|Seleccionar el texto del resumen
+Official resources and guidance limits|Recursos oficiales y límites de la orientación
+Ask HERO about your next step|Pregunte a HERO sobre su siguiente paso
+Not checked|Sin comprobar
+Connecting|Conectando
+AI reply received|Respuesta de IA recibida
+AI unavailable|IA no disponible
+Emergency guidance — AI was not contacted|Orientación de emergencia — no se contactó a la IA
+Your questions go to Azure AI. Keep private health and identifying details out of messages.|Sus preguntas se envían a Azure AI. No incluya datos médicos privados ni de identificación en los mensajes.
+How HERO uses your information|Cómo usa HERO su información
+AI returned an unverified answer. Your recovery plan is still available.|La IA devolvió una respuesta no verificada. Su plan de recuperación sigue disponible.
+Choose valid recovery actions.|Elija acciones de recuperación válidas.`.split("\n").map(line => line.split("|"))));
 const patterns = [
+ [/^Google account linked: (.+)\. Either sign-in method opens this same profile if you created a password account\.$/, (_, email) => `Cuenta de Google vinculada: ${email}. Si creó una cuenta con contraseña, ambos métodos abren este mismo perfil.`],
  [/^Declaration status unknown for (.+?)\. (.+)$/, (_, place, detail) => `Se desconoce el estado de las declaraciones para ${place}. ${detail.startsWith('Previously') ? 'Los registros anteriores se muestran como contexto histórico. Consulte de nuevo o confirme los detalles con los recursos oficiales.' : 'No se pudieron consultar los datos de FEMA. Puede usar los recursos oficiales de ayuda anteriores.'}`],
  [/^Retrieved (\d+) recent declaration records for (.+) \(all incident types\)\.(.*)$/, (_, n, place, more) => `Se consultaron ${n} registros recientes para ${place} (todos los tipos de incidentes).${more ? ' Hay más registros históricos en la fuente.' : ''}`],
  [/^No declaration records returned for (.+)\. This does not rule out other assistance\.$/, (_, place) => `No se devolvieron registros de declaraciones para ${place}. Esto no descarta otras ayudas.`],
@@ -356,12 +414,77 @@ const patterns = [
  [/^\[([x ])\] (.+)$/, (_, state, title) => `[${state}] ${translate(title, 'es')}`]
 ];
 function translate(text, language = 'en') {
- if (language !== 'es' || typeof text !== 'string') return text;
+ if (language === 'en' || typeof text !== 'string') return text;
  const key = text.trim();
+ if (language !== 'es' && Object.hasOwn(localePacks || {}, language)) {
+  const pack = localePacks[language];
+  if (Object.hasOwn(pack, key)) return text.replace(key, () => pack[key]);
+  const fill = (template, values) => (pack[template] || template).replace(/\{(\w+)\}/g, (_, token) => values[token] ?? `{${token}}`);
+  const t = value => translate(value, language);
+  const dynamic = [
+   [/^Step (\d+) of 4$/, m => fill('Step {n} of 4', {n:m[1]})],
+   [/^Step (\d+)$/, m => fill('Step {n}', {n:m[1]})],
+   [/^(\d+) localit(?:y|ies) available\.$/, m => fill('{n} localities available.', {n:m[1]})],
+   [/^(\d+) (?:damage localities|options) available\. Select one from the list\.$/, m => fill('{n} options available. Select one from the list.', {n:m[1]})],
+   [/^Selected home: (.+)$/, m => fill('Selected home: {place}', {place:m[1]})],
+   [/^(\d+) of (\d+) tasks complete.*$/, m => fill('{n} of {total} tasks complete. You can return to any task.', {n:m[1],total:m[2]})],
+   [/^(\d+) of (\d+) recovery actions marked complete by you\.$/, m => fill('{n} of {total} recovery actions marked complete by you.', {n:m[1],total:m[2]})],
+   [/^Prepared: (.+)$/, m => fill('Prepared: {date}', {date:m[1]})],
+   [/^Source: (.+)$/, m => { const source = m[1].match(/^(.+) — (https?:\/\/.+)$/); return fill('Source: {source}', {source:source ? `${t(source[1])} — ${source[2]}` : t(m[1])}); }],
+   [/^Current locality: not provided\. Help requested: (.+)\.$/, m => fill('Current locality: not provided. Help requested: {need}.', {need:t(m[1])})],
+   [/^Current locality you entered: (.+)\. Help requested: (.+)\.$/, m => fill('Current locality you entered: {place}. Help requested: {need}.', {place:m[1],need:t(m[2])})],
+   [/^Based on your request for (.+), start with these official sites:$/, m => fill('Based on your request for {need}, start with these official sites:', {need:t(Object.keys(spanish).find(k=>k.toLowerCase()===m[1])||m[1])})],
+   [/^Your saved home locality is (.+)\. Use it only if you are there now\.$/, m => fill('Your saved home locality is {place}. Use it only if you are there now.', {place:m[1]})],
+   [/^Saved home: (.+)\. Household size: (.+)\.$/, m => fill('Saved home: {place}. Household size: {size}.', {place:t(m[1]),size:t(m[2])})],
+   [/^Signed in as (.+?)(\. This profile belongs to your account\.)?$/, m => fill(m[2] ? 'Signed in as {user}. This profile belongs to your account.' : 'Signed in as {user}', {user:m[1]})],
+   [/^Google account linked: (.+)\. Either sign-in method opens this same profile if you created a password account\.$/, m => fill('Google account linked: {email}. Either sign-in method opens this same profile if you created a password account.', {email:m[1]})],
+   [/^Profile saved to (your account|this browser)\. Review or update your answers below\.$/, m => fill('Profile saved to {dest}. Review or update your answers below.', {dest:t(m[1])})],
+   [/^No household profile is saved to (your account|this browser)\.$/, m => fill('No household profile is saved to {dest}.', {dest:t(m[1])})],
+   [/^Based on your saved household answers\. Update and save the form to change these tasks\. Progress saves to (.+)$/, m => fill('Based on your saved household answers. Update and save the form to change these tasks. Progress saves to {dest}', {dest:t(m[1])})],
+   [/^Checking FEMA records for (.+)…$/, m => fill('Checking FEMA records for {place}…', {place:m[1]})],
+   [/^Declaration status unknown for (.+?)\. (.+)$/, m => fill('Declaration status unknown for {place}. {detail}', {place:m[1],detail:t(m[2].startsWith('Previously') ? 'Previously retrieved records are shown as historical context. Check again or confirm with official resources.' : 'FEMA data could not be checked. You can still use the official assistance resources above.')})],
+   [/^Retrieved (\d+) recent declaration records for (.+) \(all incident types\)\.(.*)$/, m => fill('Retrieved {n} recent declaration records for {place} (all incident types).', {n:m[1],place:m[2]})+(m[3] ? ' '+t('More historical records are available at the source.') : '')],
+   [/^No declaration records returned for (.+)\. This does not rule out other assistance\.$/, m => fill('No declaration records returned for {place}. This does not rule out other assistance.', {place:m[1]})],
+   [/^Last successful FEMA check: (.+?)( — stale\.| — cached for up to 15 minutes\.|\.)$/, m => fill('Last successful FEMA check: {date}{state}', {date:m[1],state:t(m[2])})],
+   [/^Progress was not saved\. (.+)$/, m => fill('Progress was not saved. {error}', {error:t(m[1])})],
+   [/^\[([x ])\] (.+)$/, m => `[${m[1]}] ${t(m[2])}`]
+  ];
+  for (const [pattern, render] of dynamic) { const match = key.match(pattern); if (match) return text.replace(key, () => render(match)); }
+  return text;
+ }
+ if (language !== 'es') return text;
  if (Object.hasOwn(spanish, key)) return text.replace(key, spanish[key]);
  for (const [pattern, replacement] of patterns) if (pattern.test(key)) return text.replace(key, key.replace(pattern, replacement));
  return text;
 }
-const languageCopy = { spanish, translate };
+spanish['Guide text is bundled on your device. AI replies and FEMA records keep their original language. Official sites may have their own language controls.'] = 'El texto de la guía está incluido en su dispositivo. Las respuestas de IA y los registros de FEMA mantienen su idioma original. Los sitios oficiales pueden tener sus propios controles de idioma.';
+spanish['Choose language'] = 'Elegir idioma';
+spanish['Visit official site ↗'] = 'Visitar el sitio oficial ↗';
+Object.assign(spanish, {
+ 'Google could not be loaded.': 'No se pudo cargar Google.',
+ 'Could not delete your profile. Please try again.': 'No se pudo eliminar su perfil. Vuelva a intentarlo.',
+ 'Check your connection and try again.': 'Compruebe su conexión y vuelva a intentarlo.',
+ 'Use a username with 3–32 letters, numbers, dots, underscores, or hyphens.': 'Use un nombre de usuario con 3–32 letras, números, puntos, guiones bajos o guiones.',
+ 'Use a password with 12–128 characters.': 'Use una contraseña de 12–128 caracteres.',
+ 'That username is already in use. Choose another or sign in.': 'Ese nombre de usuario ya está en uso. Elija otro o inicie sesión.',
+ 'The username or password is incorrect.': 'El nombre de usuario o la contraseña es incorrecto.',
+ 'Your sign-in changed or expired. Reload the account page.': 'Su sesión cambió o venció. Recargue la página de la cuenta.',
+ 'Google identity is invalid.': 'La identidad de Google no es válida.',
+ 'Sign in again before linking Google.': 'Inicie sesión de nuevo antes de vincular Google.',
+ 'This Google account already belongs to another HERO account. Sign out to use it; profiles will not be merged.': 'Esta cuenta de Google ya pertenece a otra cuenta de HERO. Cierre sesión para usarla; los perfiles no se combinarán.',
+ 'Google sign-in could not be verified. Reload and try again.': 'No se pudo verificar el inicio de sesión con Google. Recargue y vuelva a intentarlo.'
+});
+Object.assign(spanish, {
+  "Choose your language": "Elija su idioma",
+  "Select the language you’re most comfortable with, then press Confirm.": "Seleccione el idioma con el que se sienta más cómodo y pulse Confirmar.",
+  "You can change your language anytime using the menu at the top of the page.": "Puede cambiar de idioma en cualquier momento desde el menú de la parte superior de la página.",
+  "Selected language:": "Idioma seleccionado:",
+  "Choose a language to enable Confirm.": "Elija un idioma para activar Confirmar.",
+  "Press Confirm to enter HERO.": "Pulse Confirmar para entrar en HERO.",
+  "Reads right to left": "Se lee de derecha a izquierda",
+  "Confirm": "Confirmar"
+});
+Object.assign(spanish, localePacks?.es || {});
+const languageCopy = { spanish, translate, languages, normalizeLanguage };
 if (typeof module !== 'undefined') module.exports = languageCopy;
 if (typeof window !== 'undefined') window.heroLanguageCopy = languageCopy;

@@ -1,0 +1,265 @@
+1
+00:00:00,000 --> 00:00:04,363
+HERO helps Virginia residents find a clearer next step after a disaster.
+
+2
+00:00:04,363 --> 00:00:12,363
+A resident may know what they need, but still face uncertainty about what
+to do first and what to ask a helper.
+
+3
+00:00:12,363 --> 00:00:15,999
+This walkthrough uses fictional information and actual local browser
+captures.
+
+4
+00:00:15,999 --> 00:00:22,180
+HERO provides a curated recovery plan, optional AI explanation, and a
+reviewed summary that the resident controls.
+
+5
+00:00:30,000 --> 00:00:33,100
+The guest journey starts with three short questions.
+
+6
+00:00:33,100 --> 00:00:38,138
+First, HERO checks for immediate danger and directs emergencies to nine one
+one.
+
+7
+00:00:38,138 --> 00:00:43,951
+Next, the resident selects a current Virginia county or independent city,
+or skips that question.
+
+8
+00:00:43,951 --> 00:00:45,888
+Finally, they choose a need.
+
+9
+00:00:45,888 --> 00:00:48,988
+A deterministic plan appears before the AI reply.
+
+10
+00:00:48,988 --> 00:00:54,801
+Housing, supplies, property damage, in person assistance, and an uncertain
+need each have different tasks.
+
+11
+00:00:54,801 --> 00:01:00,226
+In this fictional property damage example, the resident has reviewed the
+official application route.
+
+12
+00:01:00,226 --> 00:01:04,877
+The next incomplete action is now prominent: confirm where the damage
+occurred.
+
+13
+00:01:04,877 --> 00:01:08,752
+Current locality, saved home locality, and damage locality are separate.
+
+14
+00:01:08,752 --> 00:01:14,952
+Each action explains why it was selected and includes an approved federal
+destination and review date.
+
+15
+00:01:14,952 --> 00:01:20,377
+Completion means the resident marked a step; it does not confirm an agency
+action.
+
+16
+00:01:20,377 --> 00:01:26,190
+Progress survives refresh in the same tab and resets when the intake or
+account changes.
+
+17
+00:01:30,000 --> 00:01:34,162
+This captured response came from the configured Microsoft Foundry agent.
+
+18
+00:01:34,162 --> 00:01:40,822
+It explains why the location of damage matters, using an action already in
+the recovery plan.
+
+19
+00:01:40,822 --> 00:01:45,400
+The server supplies approved candidate actions and validated resident
+reported completion.
+
+20
+00:01:45,400 --> 00:01:51,228
+The model must return a short reply and up to three known action
+identifiers.
+
+21
+00:01:51,228 --> 00:01:55,806
+HERO rejects malformed output, unknown actions, excessive text, and
+prohibited links.
+
+22
+00:01:55,806 --> 00:01:59,968
+It renders action titles and destinations from its own catalog.
+
+23
+00:01:59,968 --> 00:02:04,547
+The interface only says AI reply received after a successful response.
+
+24
+00:02:04,547 --> 00:02:11,206
+Foundry cannot check the nearest recovery center, determine eligibility,
+submit an application, or mark tasks complete.
+
+25
+00:02:11,206 --> 00:02:14,120
+Invalid output leaves the resident plan available.
+
+26
+00:02:15,000 --> 00:02:19,027
+The resident can prepare a summary without relying on AI.
+
+27
+00:02:19,027 --> 00:02:27,485
+The review includes their stated need, current locality, explicitly
+selected damage locality, completed and remaining actions, approved links,
+language, and date.
+
+28
+00:02:27,485 --> 00:02:33,123
+They can add unresolved questions and edit the exact text that will be
+exported.
+
+29
+00:02:33,123 --> 00:02:38,359
+Saved home locality and household size are included only after separate
+selection here.
+
+30
+00:02:38,359 --> 00:02:43,192
+Saved health, disability, and support answers, and the chat history, are
+excluded.
+
+31
+00:02:43,192 --> 00:02:48,024
+Summary edits stay in page memory and are never sent to Foundry.
+
+32
+00:02:48,024 --> 00:02:52,454
+Printing, text download, and a copy fallback support a portable handoff.
+
+33
+00:02:52,454 --> 00:02:57,690
+Exporting does not contact a helper, reserve assistance, or create a case
+record.
+
+34
+00:03:00,000 --> 00:03:02,744
+HERO also retains the existing preparedness journey.
+
+35
+00:03:02,744 --> 00:03:08,625
+This fictional household has selected children and a need to plan for
+powered medical equipment.
+
+36
+00:03:08,625 --> 00:03:15,290
+Local rules add relevant preparation tasks, including discussing backup
+arrangements with a care team or equipment provider.
+
+37
+00:03:15,290 --> 00:03:21,171
+Those saved support answers do not enter the AI request or the recovery
+helper summary.
+
+38
+00:03:21,171 --> 00:03:24,700
+Preparedness completion is stored with the encrypted local profile.
+
+39
+00:03:24,700 --> 00:03:27,836
+Recovery progress remains separate in the current tab.
+
+40
+00:03:27,836 --> 00:03:32,149
+Accounts are optional, and saved profiles stay on the host computer.
+
+41
+00:03:32,149 --> 00:03:34,501
+Residents should keep exported copies private.
+
+42
+00:03:34,501 --> 00:03:41,950
+Encryption protects stored payloads, while access to both the database and
+its key remains an important host security boundary.
+
+43
+00:03:45,000 --> 00:03:50,514
+English and Spanish cover the intake, recovery actions, explanations, and
+export boilerplate.
+
+44
+00:03:50,514 --> 00:03:56,487
+The catalog preserves the same action identifiers and approved destinations
+in both languages.
+
+45
+00:03:56,487 --> 00:03:59,704
+Resident written questions are not silently translated.
+
+46
+00:03:59,704 --> 00:04:02,920
+Professional Spanish review remains a release check.
+
+47
+00:04:05,000 --> 00:04:10,093
+Here the isolated demo server was stopped and the public guide still
+loaded.
+
+48
+00:04:10,093 --> 00:04:13,227
+The notice explains which services require a connection.
+
+49
+00:04:13,227 --> 00:04:18,320
+Accounts, saved profiles, chat, and FEMA responses are excluded from the
+public cache.
+
+50
+00:04:20,000 --> 00:04:24,470
+This is a controlled failure demonstration with the AI provider
+deliberately unconfigured.
+
+51
+00:04:24,470 --> 00:04:27,823
+It is not a claim of an Azure outage.
+
+52
+00:04:27,823 --> 00:04:34,528
+The status says AI unavailable, while the food and supplies plan, helper
+review, and export controls remain usable.
+
+53
+00:04:34,528 --> 00:04:38,625
+The resident can continue working from curated guidance and approved
+destinations.
+
+54
+00:04:38,625 --> 00:04:42,350
+No model response is needed to obtain a meaningful plan.
+
+55
+00:04:45,000 --> 00:04:47,437
+All forty four automated tests pass.
+
+56
+00:04:47,437 --> 00:04:50,686
+The final English and Spanish live checks succeeded.
+
+57
+00:04:50,686 --> 00:04:53,934
+These are synthetic observations, with no human participants.
+
+58
+00:04:53,934 --> 00:04:59,620
+HERO provides guidance and a portable summary; it does not guarantee
+assistance or outcomes.

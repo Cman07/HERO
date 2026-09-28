@@ -1,14 +1,16 @@
 {
-  "name": "virginia-flood-guide",
+  "name": "hero-disaster-assistance",
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test",
     "start:private": "node private-server.mjs",
-    "check:ai": "node check-ai.mjs"
+    "check:ai": "node check-ai.mjs",
+    "sync:ai-policy": "node sync-ai-policy.mjs"
   },
   "dependencies": {
-    "google-auth-library": "^11.1.0"
+    "google-auth-library": "^11.1.0",
+    "leaflet": "^1.9.4"
   }
 }

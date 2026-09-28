@@ -16,7 +16,9 @@ export function exampleProfile(overrides = {}) {
 test('validates profile choices and excludes arbitrary fields', () => {
   const value = schema.normalizeProfile(exampleProfile({ injected: 'private text' }), localities);
   assert.equal(value.injected, undefined);
-  assert.equal(value.version, 2);
+  assert.equal(value.version, 3);
+  assert.equal(value.homeZip, null);
+  assert.equal(value.legacyHomeLocality, 'Albemarle County');
   for (const invalid of [{ homeLocality: 'Unknown' }, { householdSize: '100' }, { pregnant: 'maybe' }]) {
     assert.throws(() => schema.normalizeProfile(exampleProfile(invalid), localities));
   }

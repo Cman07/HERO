@@ -1,7 +1,7 @@
 // Cache public source files only. Never cache APIs, cookies, messages, profiles or external sites.
-const CACHE = 'hero-public-f9-v1';
+const CACHE = 'hero-public-nationwide-v11';
 const unavailableClients = new Set();
-const PUBLIC_FILES = ['/index.html', '/plan.html', '/offline.html', '/styles.css', '/language.cjs', '/accessibility.js', '/locality-picker.js', '/app.js', '/plan.js', '/localities.cjs', '/referrals.cjs', '/preparedness.cjs', '/profile.cjs'];
+const PUBLIC_FILES = ['/index.html', '/help.html', '/plan.html', '/offline.html', '/styles.css', '/assets/hero-shield.svg', '/locales.cjs', '/language.cjs', '/accessibility.js', '/help.js', '/plan.js', '/localities.cjs', '/referrals.cjs', '/preparedness.cjs', '/profile.cjs', '/recovery.cjs', '/recovery-ui.js', '/assets/vendor/leaflet/leaflet.js', '/assets/vendor/leaflet/leaflet.css'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(PUBLIC_FILES)));
 });

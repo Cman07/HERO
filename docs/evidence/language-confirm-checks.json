@@ -1,0 +1,62 @@
+{
+  "checkedAt": "2026-09-27T16:52:18.622Z",
+  "initial": {
+    "disabled": true,
+    "language": "en",
+    "open": true
+  },
+  "escape": {
+    "language": "en",
+    "notice": "Press Confirm to enter HERO.",
+    "open": true
+  },
+  "selected": {
+    "language": "en",
+    "open": true,
+    "selected": "fr"
+  },
+  "confirmed": {
+    "direction": "ltr",
+    "heading": "Assistance en cas de catastropheà Virginie.",
+    "language": "fr",
+    "open": false
+  },
+  "refresh": {
+    "language": "fr",
+    "open": false,
+    "selection": "fr"
+  },
+  "headerPending": {
+    "direction": "ltr",
+    "language": "fr",
+    "open": true,
+    "selected": "ar"
+  },
+  "cancel": {
+    "focus": "",
+    "language": "fr",
+    "open": false
+  },
+  "mobile": {
+    "choiceCount": 8,
+    "confirmVisible": true,
+    "horizontalOverflow": false,
+    "menuDirection": "ltr",
+    "selected": "fr",
+    "width": 375
+  },
+  "keyboard": [
+    {
+      "focus": "language-welcome-confirm",
+      "inMenu": true
+    },
+    {
+      "focus": "tel:911",
+      "inMenu": true
+    },
+    {
+      "focus": "language-welcome-confirm",
+      "inMenu": true
+    }
+  ]
+}

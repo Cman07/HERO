@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0a3922" />
-    <meta name="description" content="Create an optional household profile for the Virginia Flood Guide." />
-    <title>Plan ahead — Virginia Flood Guide</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a3922'/%3E%3Cpath d='M11 39c7 0 7-6 14-6s7 6 14 6 7-6 14-6M11 49c7 0 7-6 14-6s7 6 14 6 7-6 14-6' fill='none' stroke='%23d2f2e3' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <meta name="theme-color" content="#f7f9fa" />
+    <meta name="description" content="Create an optional household profile for the HERO — US Disaster Assistance Navigator." />
+    <title>Plan ahead — HERO — US Disaster Assistance Navigator</title>
+    <link rel="icon" type="image/svg+xml" href="./assets/hero-shield.svg" />
+    <script src="./locales.cjs"></script>
     <script src="./language.cjs"></script>
     <script src="./accessibility.js"></script>
     <link rel="stylesheet" href="styles.css" />
@@ -15,13 +16,13 @@
     <a class="skip" href="#main">Skip to main content</a>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="./index.html" aria-label="Virginia Flood Guide home">
-          <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M2 9c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3M2 16c3.3 0 3.3-3 6.6-3s3.3 3 6.6 3 3.3-3 6.6-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-          <span>Virginia<br class="brand-break" /> Flood Guide</span>
+        <a class="brand" href="./index.html" aria-label="HERO home">
+          <span class="brand-mark" aria-hidden="true"><img src="./assets/hero-shield.svg" width="48" height="48" alt="" decoding="async" /></span>
+          <span>HERO<span class="brand-subtitle">US Disaster Assistance Navigator</span></span>
         </a>
         <nav class="header-links" aria-label="Main navigation">
           <a href="./index.html">Home</a>
-          <a href="./index.html#help" data-start-help>Find help now</a>
+          <a href="./help.html" data-start-help>Find help now</a>
           <a href="./plan.html" aria-current="page">Plan ahead</a>
           <a class="nav-account" id="account-nav" href="./account.html">Sign in</a>
         </nav>
@@ -29,12 +30,17 @@
     </header>
     <section class="access-controls" aria-label="Language settings">
       <div class="access-controls-inner">
-        <label for="language-choice">Language / Idioma <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option></select></label>
+        <label for="language-choice"><span aria-hidden="true">🌐</span> Language <select id="language-choice"><option value="en" lang="en">English</option><option value="es" lang="es">Español</option>
+          <option value="ar" lang="ar" dir="rtl">العربية</option>
+          <option value="zh-Hans" lang="zh-Hans">简体中文</option>
+          <option value="ko" lang="ko">한국어</option>
+          <option value="vi" lang="vi">Tiếng Việt</option>
+          <option value="tl" lang="tl">Tagalog</option><option value="fr" lang="fr">Français</option></select></label>
       </div>
       <p class="connection-notice" id="connection-notice" role="status" hidden>Connection unavailable: the public guide is available. Accounts, saved profiles, chat, FEMA checks and external sites need a connection. Nothing is queued for automatic sending.</p>
     </section><noscript><p class="connection-notice">JavaScript is off. You can use the official resources below. Questionnaire, account and profile controls need JavaScript.</p><p lang="es">JavaScript está desactivado. Puede usar los recursos oficiales. Si está en peligro inmediato o tiene lesiones graves, <a href="tel:911">llame al 911</a>.</p><a href="https://www.disasterassistance.gov/">DisasterAssistance.gov</a> · <a href="https://egateway.fema.gov/ESF6/DRCLocator">FEMA Recovery Center locator</a></noscript>
     <main tabindex="-1" id="main" class="plan-main">
-      <a class="back-link" href="./index.html">← Back to flood guide</a>
+      <a class="back-link" href="./index.html">← Back to HERO</a>
       <div class="intro plan-intro">
         <p class="eyebrow">A little preparation, more peace of mind</p>
         <h1>Your household.<br /><span>Your plan.</span></h1>
@@ -48,22 +54,26 @@
         <form id="profile-form" novalidate>
           <section class="profile-panel" data-panel="0" aria-labelledby="profile-title">
             <h2 id="profile-title" tabindex="-1">Where do you call home?</h2>
-            <p class="panel-description">Your home locality helps you prepare. When finding help, you’ll confirm where you are now separately.</p>
-            <label class="location-field" for="home-search">Home locality <span class="optional">(optional)</span></label>
-            <div class="locality-picker">
-              <input class="location-input" id="home-search" type="search" role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded="false" aria-controls="home-locality-list" autocomplete="off" placeholder="Type or choose a locality" aria-describedby="home-count home-selection" />
-              <ul class="location-options" id="home-locality-list" role="listbox" aria-label="Virginia home localities" hidden></ul>
-            </div>
-            <input id="home-locality" type="hidden" />
-            <p class="location-count" id="home-count" role="status" aria-live="polite"></p>
-            <button class="text-button" id="clear-home" type="button">Skip / clear home locality</button>
-            <p id="home-selection" class="quiet-note">No home locality selected.</p>
-            <label class="location-field" for="household-size">How many people are in your household?</label>
-            <select class="profile-select" id="household-size"><option value="unspecified">Prefer not to say</option><option>1</option><option>2</option><option>3</option><option>4</option><option value="5+">5 or more</option></select>
+            <p class="panel-description">An optional home ZIP helps with location-based preparation. Your current and damage ZIPs are confirmed separately when finding help.</p>
+            <label class="location-field" for="home-search">Home ZIP code <span class="optional">(optional)</span></label>
+            <input class="location-input" id="home-search" type="text" inputmode="numeric" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code" placeholder="Five-digit ZIP" aria-describedby="home-count home-selection" />
+            <p id="home-count" class="location-count" role="status"></p>
+            <button class="text-button" id="clear-home" type="button">Skip / clear home ZIP</button>
+            <p id="home-selection" class="quiet-note">No home ZIP entered.</p>
+            <p id="legacy-home" class="quiet-note" hidden></p>
           </section>
           <section class="profile-panel" data-panel="1" hidden>
             <h2 tabindex="-1">Who are you planning for?</h2>
             <p class="panel-description">Include yourself and anyone in your household. You don’t need to share names or medical details.</p>
+            <label class="location-field" for="household-size">Household size</label>
+            <select class="location-input" id="household-size">
+              <option value="unspecified">Prefer not to say</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5+">5 or more</option>
+            </select>
             <div id="household-questions"></div>
           </section>
           <section class="profile-panel" data-panel="2" hidden>
@@ -87,7 +97,7 @@
             <p><strong>Delete this saved profile?</strong> This removes the household answers from the local database. You can create a new profile later. Your account will remain.</p>
             <div class="step-actions"><button class="primary-button" id="confirm-delete" type="button">Delete profile</button><button class="secondary-button" id="cancel-delete" type="button">Keep profile</button></div>
           </div>
-          <div class="profile-footer-actions"><button class="text-button" id="remove-profile" type="button" hidden>Delete saved profile</button><a href="./index.html#help">Find help now →</a></div>
+          <div class="profile-footer-actions"><button class="text-button" id="remove-profile" type="button" hidden>Delete saved profile</button><a href="./help.html">Find help now →</a></div>
         </form>
       </section>
       <section class="question-flow checklist-card" id="preparedness-plan" aria-labelledby="checklist-title" hidden>
@@ -113,7 +123,6 @@
     </main>
     <footer><p>Finding help does not require a profile. In immediate danger or seriously injured, call <a href="tel:911">911</a>.</p></footer>
     <script src="./localities.cjs"></script>
-    <script src="./locality-picker.js"></script>
     <script src="./preparedness.cjs"></script>
     <script src="./profile.cjs"></script>
     <script src="./plan.js"></script>

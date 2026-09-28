@@ -1,0 +1,119 @@
+{
+  "checkedAt": "2026-09-27T17:34:46.530Z",
+  "checks": [
+    {
+      "confirm": "Confirmer",
+      "language": "fr",
+      "menuLanguage": "fr",
+      "notice": "Vous pouvez changer de langue à tout moment dans le menu en haut de la page.",
+      "open": true,
+      "pageHeading": "Assistance en cas de catastropheen Virginie.",
+      "pageTitle": "HERO — Navigateur d'assistance en cas de catastrophe en Virginie",
+      "title": "Choisissez votre langue"
+    },
+    {
+      "confirm": "Confirm",
+      "language": "en",
+      "menuDirection": "ltr",
+      "menuLanguage": "en",
+      "open": true,
+      "pageTitle": "HERO — Virginia Disaster Assistance Navigator",
+      "title": "Choose your language"
+    },
+    {
+      "confirm": "Confirmar",
+      "language": "es",
+      "menuDirection": "ltr",
+      "menuLanguage": "es",
+      "open": true,
+      "pageTitle": "HERO — Orientación sobre ayuda ante desastres en Virginia",
+      "title": "Elija su idioma"
+    },
+    {
+      "confirm": "تأكيد",
+      "language": "ar",
+      "menuDirection": "rtl",
+      "menuLanguage": "ar",
+      "open": true,
+      "pageTitle": "HERO — موجه المساعدة في الكوارث في فيرجينيا",
+      "title": "اختر لغتك"
+    },
+    {
+      "confirm": "确认",
+      "language": "zh-Hans",
+      "menuDirection": "ltr",
+      "menuLanguage": "zh-Hans",
+      "open": true,
+      "pageTitle": "HERO — 弗吉尼亚灾难援助导航",
+      "title": "选择您的语言"
+    },
+    {
+      "confirm": "확인",
+      "language": "ko",
+      "menuDirection": "ltr",
+      "menuLanguage": "ko",
+      "open": true,
+      "pageTitle": "HERO — 버지니아 재난 지원 내비게이터",
+      "title": "언어를 선택하세요"
+    },
+    {
+      "confirm": "Xác nhận",
+      "language": "vi",
+      "menuDirection": "ltr",
+      "menuLanguage": "vi",
+      "open": true,
+      "pageTitle": "HERO — Trình điều hướng hỗ trợ thảm họa Virginia",
+      "title": "Chọn ngôn ngữ của bạn"
+    },
+    {
+      "confirm": "Kumpirmahin",
+      "language": "tl",
+      "menuDirection": "ltr",
+      "menuLanguage": "tl",
+      "open": true,
+      "pageTitle": "HERO — Virginia Disaster Assistance Navigator",
+      "title": "Piliin ang iyong wika"
+    },
+    {
+      "confirm": "Confirmer",
+      "language": "fr",
+      "menuDirection": "ltr",
+      "menuLanguage": "fr",
+      "open": true,
+      "pageTitle": "HERO — Navigateur d'assistance en cas de catastrophe en Virginie",
+      "title": "Choisissez votre langue"
+    }
+  ],
+  "cancel": {
+    "language": "zh-Hans",
+    "open": false
+  },
+  "unconfirmedRefresh": {
+    "language": "zh-Hans",
+    "open": false
+  },
+  "mobile": [
+    {
+      "confirm": "تأكيد",
+      "confirmVisible": true,
+      "horizontalOverflow": false,
+      "language": "ar",
+      "menuDirection": "rtl",
+      "nameFont": "18px"
+    },
+    {
+      "confirm": "Confirmer",
+      "confirmVisible": true,
+      "horizontalOverflow": false,
+      "language": "fr"
+    }
+  ],
+  "confirmed": {
+    "language": "fr",
+    "open": false
+  },
+  "confirmedRefresh": {
+    "language": "fr",
+    "open": false
+  }
+}

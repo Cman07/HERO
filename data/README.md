@@ -1,0 +1,3 @@
+ZIP-area centroids and place labels are derived from [GeoNames postal data](https://download.geonames.org/export/zip/) (CC BY 4.0, downloaded September 27, 2026). ZIP-to-county candidates are derived from the [2020 Census ZCTA-to-county relationship file](https://www2.census.gov/geo/docs/maps-data/data/rel2020/zcta520/tab20_zcta520_county20_natl.txt) (downloaded September 27, 2026). Run `docs/build-zip-data.py` after obtaining the source archives to reproduce the compact JSON files.
+
+A ZIP is a delivery code and the Census ZCTA is an approximate geographic area. A listed county is a candidate for a resident to confirm, never an inferred damage county. Some ZIPs have no matching ZCTA or county relationship.

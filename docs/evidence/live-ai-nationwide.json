@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-09-28T01:30:52.438Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 2383,
+      "status": 200,
+      "valid": true,
+      "reply": "Next, confirm exactly where the property damage occurred. This location may be different from where you currently are or usually live. Knowing the precise damage location helps determine which assistance programs apply. After that, review what information you need to prepare privately for applying, such as documents and proof of damage. This will make your recovery application process smoother. Would you like guidance on what specific information to gather for your application?",
+      "actionIds": [
+        "damage-locality",
+        "damage-prepare"
+      ]
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1105,
+      "status": 200,
+      "valid": true,
+      "reply": "Ahora, confirme dónde ocurrieron los daños, porque puede ser diferente de su ubicación actual. Esto ayuda a determinar qué agencias o programas de asistencia pueden estar disponibles para usted. ¿Sabe con certeza en qué lugar se produjeron los daños a su propiedad?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

@@ -24,6 +24,12 @@
         let profile = null;
         let profileIdentity;
         let contextRestored = false;
+        let intakeStartedAt = null;
+        const recoveryUI = window.createRecoveryUI({ getContext: () => ({
+          owner: profileIdentity || null, answers,
+          damageLocality: localities.includes(damageSelect.value) ? damageSelect.value : null,
+          profile: profile ? { homeLocality: profile.homeLocality, householdSize: profile.householdSize } : null
+        }) });
         function saveHelpContext() {
           contextRestored = true;
           try { sessionStorage.setItem('hero-help-context', JSON.stringify({ owner: profileIdentity || 'guest', answers: { ...answers } })); }
@@ -55,7 +61,7 @@
             const response = await fetch('/api/profile', { signal: AbortSignal.timeout(5000) });
             if (!response.ok) throw new Error();
             const data = await response.json();
-            const nextIdentity = data.user?.username || 'guest';
+            const nextIdentity = data.user ? 'account:' + data.user.username : 'guest';
             if (profileIdentity !== undefined && profileIdentity !== nextIdentity) reset();
             profileIdentity = nextIdentity;
             if (contextRestored && answers.danger === 'no' && answers.need) saveHelpContext();
@@ -73,7 +79,7 @@
           document.getElementById('household-context-summary').textContent = profile ? 'Saved home: ' + (profile.homeLocality || 'not provided') + '. Household size: ' + (profile.householdSize === 'unspecified' ? 'not provided' : profile.householdSize) + '.' : '';
           if (!profile) document.getElementById('use-profile').checked = false;
           if (profileIdentity !== undefined) restoreHelpContext(profileIdentity);
-          if (!document.getElementById('summary-step').hidden) renderPrivateReminders();
+          if (!document.getElementById('summary-step').hidden) { renderPrivateReminders(); recoveryUI.setContext(); }
         }
         window.addEventListener('pageshow', refreshSavedHome);
         window.addEventListener('focus', refreshSavedHome);
@@ -134,6 +140,7 @@
           document.getElementById('declaration-list').replaceChildren();
           document.getElementById('declaration-checked').textContent = '';
           document.getElementById('declaration-status').textContent = 'Declaration status unknown. Select the damage locality and check FEMA records.';
+          recoveryUI.changed();
         }
         document.getElementById('damage-locality-form').addEventListener('submit', async event => {
           event.preventDefault();
@@ -172,6 +179,7 @@
           search, value: localitySelect, list: localityList, count: localityCount, error,
           onChange: () => {
             answers.locality = null; answers.need = null;
+            recoveryUI.reset();
             try { sessionStorage.removeItem('hero-help-context'); } catch { /* Current-page editing remains available. */ }
           }
         });
@@ -243,26 +251,27 @@
           chatStatus.textContent = message;
           chatStatus.classList.toggle('error', isError);
         }
-        function addMessage(role, content) {
+        function aiState(state) {
+          document.getElementById('ai-state').textContent = state;
+        }
+        function addMessage(role, content, actionIds = [], messageLanguage = window.heroAccess.language) {
           const item = document.createElement('div');
           item.className = 'chat-message ' + role;
+          item.lang = messageLanguage;
+          item.dir = role === 'user' ? 'auto' : window.heroLanguageCopy.languages[messageLanguage].dir;
           const label = document.createElement('strong');
-          label.textContent = window.heroAccess.translate(role === 'assistant' ? 'Flood Guide' : 'You');
+          label.textContent = window.heroLanguageCopy.translate(role === 'assistant' ? 'HERO' : 'You', messageLanguage);
           const body = document.createElement('span');
           body.textContent = content;
           item.append(label, body);
-          if (role === 'assistant') {
-            // DOM text and two exact official destinations only; model HTML never executes.
-            const pattern = /https:\/\/(?:www\.disasterassistance\.gov\/?|egateway\.fema\.gov\/ESF6\/DRCLocator)(?=[\s)\].,;!?]|$)/g;
-            let end = 0;
-            body.replaceChildren();
-            for (const match of content.matchAll(pattern)) {
-              body.append(document.createTextNode(content.slice(end, match.index)));
-              const link = document.createElement('a'); link.href = match[0];
-              link.textContent = match[0].includes('disasterassistance') ? 'DisasterAssistance.gov' : window.heroAccess.translate('FEMA Disaster Recovery Center locator');
-              body.append(link); end = match.index + match[0].length;
+          if (role === 'assistant' && Array.isArray(actionIds)) {
+            // Links and labels always come from HERO's catalog, never model text.
+            const actions = window.heroRecovery.getPlan(answers.need, messageLanguage);
+            for (const id of [...new Set(actionIds)].slice(0, 3)) {
+              const action = actions.find(candidate => candidate.id === id); if (!action) continue;
+              const link = document.createElement('a'); link.href = action.source.url; link.textContent = action.title;
+              link.className = 'chat-action'; item.append(link);
             }
-            body.append(document.createTextNode(content.slice(end)));
           }
           chatLog.append(item);
           chatLog.scrollTop = chatLog.scrollHeight;
@@ -289,7 +298,7 @@
         }
         async function askChat() {
           if (pending || answers.danger !== 'no') return;
-          if (!navigator.onLine) { setStatus('Chat needs a connection. Your question is still available to retry.', true); chatRetry.hidden = false; return; }
+          if (!navigator.onLine) { aiState('AI unavailable'); setStatus('Chat needs a connection. Your question is still available to retry.', true); chatRetry.hidden = false; return; }
           chatRetry.hidden = true;
           messages = messages.slice(-12);
           while (messages.length > 1 && messages.reduce((n, message) => n + message.content.length, 0) > 10000) messages.shift();
@@ -297,6 +306,9 @@
           chatSend.disabled = true;
           const controller = new AbortController();
           requestController = controller;
+          aiState('Connecting');
+          const requestStartedAt = performance.now();
+          const requestLanguage = window.heroAccess.language;
           setStatus('Finding a helpful next step…');
           chatLog.setAttribute('aria-busy', 'true');
           const timeout = setTimeout(() => controller.abort(), 40000);
@@ -304,17 +316,20 @@
             const response = await fetch('/api/chat', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ answers, messages, language: window.heroAccess.language, useProfile: document.getElementById('use-profile').checked }),
+              body: JSON.stringify({ answers, messages, completedActionIds: recoveryUI.completed(), language: requestLanguage, useProfile: document.getElementById('use-profile').checked }),
               signal: controller.signal
             });
             const data = await response.json();
             if (requestController !== controller) return;
             if (!response.ok || typeof data.reply !== 'string') throw new Error(data.error || 'Chat is unavailable right now.');
             messages.push({ role: 'assistant', content: data.reply });
-            addMessage('assistant', data.reply);
+            addMessage('assistant', data.reply, data.actionIds, requestLanguage);
+            aiState(data.emergency ? 'Emergency guidance — AI was not contacted' : 'AI reply received');
+            document.getElementById('ai-state').dataset.responseMs = (performance.now() - requestStartedAt).toFixed(1);
             setStatus('');
-            if (data.emergency) { try { sessionStorage.removeItem('hero-help-context'); } catch {} answers.danger = 'unsure'; chatInput.disabled = true; chatRetry.hidden = true; document.getElementById('chat-emergency').hidden = false; }
+            if (data.emergency) { try { sessionStorage.removeItem('hero-help-context'); } catch {} answers.danger = 'unsure'; recoveryUI.reset(); document.getElementById('recovery-plan').hidden = true; chatInput.disabled = true; chatRetry.hidden = true; document.getElementById('chat-emergency').hidden = false; document.getElementById('chat-emergency').scrollIntoView({ block: 'center' }); }
           } catch (chatError) {
+            if (requestController === controller) aiState('AI unavailable');
             if (requestController === controller && chatError.name === 'AbortError') {
               setStatus('Chat took too long. Retry when your connection is ready, or use the official links.', true);
               chatRetry.hidden = false;
@@ -346,6 +361,9 @@
           document.getElementById('private-reminders-list').replaceChildren(...items);
         }
         function beginChat(startConversation = true) {
+          const planStartedAt = performance.now();
+          document.getElementById('recovery-plan').hidden = false;
+          aiState('Not checked');
           chatInput.disabled = false;
           document.getElementById('chat-emergency').hidden = true;
           clearDeclarations();
@@ -363,8 +381,15 @@
           document.getElementById('summary-text').textContent = location + ' Help requested: ' + answers.need + '.';
           renderReferrals();
           renderPrivateReminders();
+          recoveryUI.setContext();
           show('summary-step');
+          if (!startConversation) chatRetry.hidden = false;
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            document.getElementById('recovery-plan').dataset.readyMs = (performance.now() - planStartedAt).toFixed(1);
+            if (intakeStartedAt !== null) document.getElementById('recovery-plan').dataset.intakeMs = (performance.now() - intakeStartedAt).toFixed(1);
+          }));
           if (!navigator.onLine) {
+            aiState('AI unavailable');
             chatRetry.hidden = false;
             setStatus('Chat needs a connection. Your question is still available to retry.');
           } else if (startConversation) askChat();
@@ -375,9 +400,12 @@
           chatSend.disabled = false; chatLog.setAttribute('aria-busy', 'false'); chatLog.replaceChildren(); chatInput.value = '';
           document.getElementById('chat-emergency').hidden = true;
           messages = [{ role: 'user', content: 'Use the questionnaire to give one safe next step and ask one useful follow-up question if needed.' }];
+          aiState('Not checked');
           chatRetry.hidden = false; setStatus('Conversation cleared. Start again when ready.'); chatInput.focus();
         });
         function reset() {
+          intakeStartedAt = performance.now();
+          recoveryUI.reset(); aiState('Not checked');
           chatInput.disabled = false;
           document.getElementById('chat-emergency').hidden = true;
           clearDeclarations();
@@ -421,6 +449,7 @@
             chooseLocality(profile.homeLocality);
             search.focus();
           } else if (button.dataset.danger) {
+            recoveryUI.reset();
             clearDeclarations();
             try { sessionStorage.removeItem('hero-help-context'); } catch { /* Current-page editing remains available. */ }
             answers.need = null;
@@ -442,6 +471,7 @@
             requestController = null;
             pending = false;
             chatSend.disabled = false;
+            aiState('Not checked');
             show(button.dataset.back);
           } else if (button.hasAttribute('data-continue-chat')) {
             if (!messages.some(message => message.role === 'assistant') && !pending) askChat();

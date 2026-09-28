@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-27T16:50:54.216Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "fr",
+      "elapsedMs": 2179,
+      "status": 200,
+      "valid": true,
+      "reply": "La prochaine étape utile est de confirmer où les dommages ont eu lieu. Cela vous aidera à préciser votre demande et à comprendre les options de soutien disponibles. Gardez en mémoire que l’endroit où vous êtes actuellement, Fairfax city, peut être différent du lieu où les dommages se sont produits. Pour avancer, pourriez-vous m’indiquer dans quel comté ou ville indépendante les dommages sont survenus ?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

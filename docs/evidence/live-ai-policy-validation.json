@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-09-27T04:33:22.531Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 2469,
+      "status": 502,
+      "valid": false,
+      "error": "invalid_output"
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1407,
+      "status": 200,
+      "valid": true,
+      "reply": "Confirme en qué condado o ciudad independiente ocurrieron los daños a su propiedad. Esto ayuda a precisar la información sobre asistencia y requisitos que aplican en esa área. ¿En qué condado o ciudad independiente de Virginia ocurrió el daño?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

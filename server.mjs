@@ -1,4 +1,4 @@
-import { instructionsFor, immediateDanger, emergencyReply, allowedReply } from './chat-policy.mjs';
+import { instructionsFor, immediateDanger, emergencyReply, parseActionReply } from './chat-policy.mjs';
 import { gzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
@@ -11,20 +11,29 @@ import localities from './localities.cjs';
 import { randomBytes } from 'node:crypto';
 import schema from './profile.cjs';
 import preparedness from './preparedness.cjs';
+import recovery from './recovery.cjs';
+import languageCopy from './language.cjs';
 import { openProfileDatabase } from './profile-db.mjs';
 import { openAccountDatabase, AccountError } from './auth-db.mjs';
 import { verifyGoogleCredential } from './google-auth.mjs';
 import { createDeclarationService } from './declarations.mjs';
+import { createZipService, exampleLocation, validZip } from './zip-service.mjs';
+import { createLocalResourceService } from './local-resources.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const execFileAsync = promisify(execFile);
 const staticFiles = new Map([
-  ...['language.cjs', 'accessibility.js', 'locality-picker.js', 'sw.js'].map(name => ['/' + name, { name, type: 'text/javascript' }]),
+  ...['locales.cjs', 'language.cjs', 'accessibility.js', 'locality-picker.js', 'recovery.cjs', 'recovery-ui.js', 'help.js', 'sw.js'].map(name => ['/' + name, { name, type: 'text/javascript' }]),
+  ['/assets/vendor/leaflet/leaflet.js', { name: 'assets/vendor/leaflet/leaflet.js', type: 'text/javascript' }],
+  ['/assets/vendor/leaflet/leaflet.css', { name: 'assets/vendor/leaflet/leaflet.css', type: 'text/css' }],
+  ...['marker-icon.png','marker-icon-2x.png','marker-shadow.png','layers.png','layers-2x.png'].map(name => [`/assets/vendor/leaflet/images/${name}`, { name: `assets/vendor/leaflet/images/${name}`, type: 'image/png', binary: true }]),
   ['/offline.html', { name: 'offline.html', type: 'text/html' }],
   ['/assets/community.svg', { name: 'assets/community.svg', type: 'image/svg+xml' }],
+  ['/assets/hero-shield.svg', { name: 'assets/hero-shield.svg', type: 'image/svg+xml' }],
   ['/assets/fonts/dm-sans-latin.woff2', { name: 'assets/fonts/dm-sans-latin.woff2', type: 'font/woff2', binary: true }],
   ['/assets/fonts/OFL.txt', { name: 'assets/fonts/OFL.txt', type: 'text/plain' }],
   ['/index.html', { name: 'index.html', type: 'text/html' }],
+  ['/help.html', { name: 'help.html', type: 'text/html' }],
   ['/plan.html', { name: 'plan.html', type: 'text/html' }],
   ['/account.html', { name: 'account.html', type: 'text/html' }],
   ['/account.js', { name: 'account.js', type: 'text/javascript' }],
@@ -43,6 +52,7 @@ const allowedNeeds = new Set([
   'In-person assistance',
   'Something else / not sure'
 ]);
+const disasterTypes = new Set(['flood', 'hurricane', 'wildfire', 'severe-storm', 'winter-storm', 'earthquake', 'other']);
 
 
 export function getFoundryAgentEndpoint(value) {
@@ -114,10 +124,15 @@ async function readJson(req) {
 
 function validChat(body) {
   if (!body || typeof body !== 'object' || !body.answers || !Array.isArray(body.messages)) return false;
-  const { danger, locality, need } = body.answers;
-  if (danger !== 'no' || !allowedNeeds.has(need)) return false;
-  if (locality !== null && !localities.includes(locality)) return false;
-  if (body.language !== undefined && !['en', 'es'].includes(body.language)) return false;
+  const { danger, locality, currentZip, disasterType, need } = body.answers;
+  if (![null, 'no', 'yes', 'unsure'].includes(danger)) return false;
+  if (need !== null && need !== undefined && !allowedNeeds.has(need)) return false;
+  if (currentZip !== undefined) {
+    if (currentZip !== null && !validZip(currentZip)) return false;
+    if (disasterType !== null && disasterType !== undefined && !disasterTypes.has(disasterType)) return false;
+  } else if (locality !== null && !localities.includes(locality)) return false;
+  if (need && (danger !== 'no' || (currentZip !== undefined && !disasterTypes.has(disasterType)))) return false;
+  if (body.language !== undefined && !Object.hasOwn(languageCopy.languages, body.language)) return false;
   if (body.messages.reduce((n, m) => n + (typeof m?.content === 'string' ? m.content.length : 0), 0) > 10000) return false;
   if (body.messages.length < 1 || body.messages.length > 12) return false;
   if (body.messages.at(-1)?.role !== 'user') return false;
@@ -143,7 +158,9 @@ function accountCookie(token, env) {
   return `hero_session=${token || ''}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token ? 604800 : 0}${(env.NODE_ENV === 'production' || env.HERO_ORIGIN?.startsWith('https://')) ? '; Secure' : ''}`;
 }
 
-export function createAppServer({ env = process.env, fetchImpl = fetch, profileStore = null, accountStore = null, googleVerifier = verifyGoogleCredential, declarationService = createDeclarationService(), foundryTokenProvider = getFoundryAccessToken } = {}) {
+export function createAppServer({ env = process.env, fetchImpl = fetch, profileStore = null, accountStore = null, googleVerifier = verifyGoogleCredential, declarationService = createDeclarationService(), zipService = null, resourceService = null, foundryTokenProvider = getFoundryAccessToken } = {}) {
+  zipService ||= createZipService({ fetchImpl });
+  resourceService ||= createLocalResourceService({ fetchImpl });
   const agentEndpoint = getFoundryAgentEndpoint(env.FOUNDRY_AGENT_ENDPOINT);
   const endpoint = env.AZURE_OPENAI_ENDPOINT;
   const deployment = env.AZURE_OPENAI_DEPLOYMENT;
@@ -169,7 +186,25 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
   }
 
   return createServer(async (req, res) => {
-    const path = new URL(req.url || '/', 'http://localhost').pathname;
+    const requestUrl = new URL(req.url || '/', 'http://localhost');
+    const path = requestUrl.pathname;
+    if (path === '/api/locations/zip' && req.method === 'GET') {
+      const zip = requestUrl.searchParams.get('zip');
+      if (!validZip(zip)) { sendJson(res, 400, { error: 'Enter a five-digit ZIP code.' }); return; }
+      const location = await zipService.lookup(zip);
+      sendJson(res, location ? 200 : 404, location || { zip, location: null, error: 'ZIP area could not be resolved. Federal guidance is still available.' });
+      return;
+    }
+    if (path === '/api/local-resources' && req.method === 'GET') {
+      const zip = requestUrl.searchParams.get('zip');
+      const example = requestUrl.searchParams.get('example');
+      if ((zip && example) || (!zip && example !== 'charlottesville') || (zip && !validZip(zip))) { sendJson(res, 400, { error: 'Choose a five-digit ZIP or the Charlottesville example.' }); return; }
+      const location = zip ? await zipService.lookup(zip) : exampleLocation;
+      if (!location) { sendJson(res, 404, { error: 'ZIP area could not be resolved. Federal guidance is still available.', zip }); return; }
+      try { sendJson(res, 200, await resourceService.lookup(location)); }
+      catch { sendJson(res, 200, { location, pins: [], sources: [], checkedAt: null, partialFailure: true, example: !zip }); }
+      return;
+    }
     if (req.method === 'GET' && ['/plan', '/plan/'].includes(path)) {
       res.writeHead(302, { Location: '/plan.html' }); res.end(); return;
     }
@@ -193,14 +228,20 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
       if (!req.headers['content-type']?.startsWith('application/json')) { sendJson(res, 415, { error: 'Send JSON.' }); return; }
       let body;
       try { body = await readJson(req); } catch { sendJson(res, 400, { error: 'Choose a damage locality and try again.' }); return; }
-      if (body?.danger !== 'no' || !localities.includes(body.damageLocality)) { sendJson(res, 400, { error: 'Confirm that you are not in immediate danger and select a damage locality.' }); return; }
+      const legacyDamage = typeof body?.damageLocality === 'string' && localities.includes(body.damageLocality);
+      const zipDamage = validZip(body?.damageZip) && typeof body?.countyFips === 'string' && /^\d{5}$/.test(body.countyFips);
+      if (body?.danger !== 'no' || (!legacyDamage && !zipDamage)) { sendJson(res, 400, { error: 'Confirm your safety and select a damage ZIP and county.' }); return; }
+      if (zipDamage) {
+        const damageArea = await zipService.lookup(body.damageZip);
+        if (!damageArea?.counties.some(county => county.fips === body.countyFips)) { sendJson(res, 400, { error: 'Confirm a county offered for this damage ZIP.' }); return; }
+      }
       const address = req.socket.remoteAddress || 'unknown'; const time = Date.now();
       for (const [key, stamps] of declarationAttempts) if (stamps.at(-1) < time - 60_000) declarationAttempts.delete(key);
       const recent = (declarationAttempts.get(address) || []).filter(stamp => stamp > time - 60_000);
       if (recent.length >= 20) { sendJson(res, 429, { error: 'Please wait a minute before checking declarations again.' }); return; }
       recent.push(time); declarationAttempts.set(address, recent);
-      try { sendJson(res, 200, await declarationService.lookup(body.damageLocality)); }
-      catch { sendJson(res, 200, { status: 'unknown', locality: body.damageLocality, checkedAt: null, stale: false, records: [] }); }
+      try { sendJson(res, 200, await declarationService.lookup(legacyDamage ? body.damageLocality : { damageZip: body.damageZip, countyFips: body.countyFips })); }
+      catch { sendJson(res, 200, { status: 'unknown', locality: body.damageZip || body.damageLocality, checkedAt: null, stale: false, records: [] }); }
       return;
     }
     if (path.startsWith('/api/account')) {
@@ -324,6 +365,7 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
         } else {
           try { value = schema.normalizeProfile({ ...input, ...(existing ? { completedTasks: existing.completedTasks } : {}) }, localities); }
           catch (error) { sendJson(res, 400, { error: error.message }); return; }
+          if (value.homeZip && !(await zipService.lookup(value.homeZip))) { sendJson(res, 400, { error: 'This home ZIP could not be resolved. Check the five digits or leave it blank.' }); return; }
         }
         const owner = token || randomBytes(32).toString('hex');
         const profile = profileStore.save(owner, value);
@@ -349,19 +391,39 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
       try { body = await readJson(req); } catch (error) { sendJson(res, 400, { error: error.message }); return; }
       if (!validChat(body)) { sendJson(res, 400, { error: 'Check the questionnaire answers and message, then try again.' }); return; }
       const language = body.language || 'en';
-      if (immediateDanger(body.messages.at(-1).content)) { sendJson(res, 200, { reply: emergencyReply(language), emergency: true }); return; }
+      if (body.answers.danger === 'yes' || body.answers.danger === 'unsure' || immediateDanger(body.messages.at(-1).content)) { sendJson(res, 200, { reply: emergencyReply(language), emergency: true }); return; }
+      const hasPlan = body.answers.danger === 'no' && allowedNeeds.has(body.answers.need);
+      let validatedArea = null;
+      let locationContext = { currentZip: body.answers.currentZip || null, disasterType: body.answers.disasterType || null };
+      if (hasPlan && body.answers.currentZip) {
+        const zipLocation = await zipService.lookup(body.answers.currentZip);
+        if (zipLocation) {
+          validatedArea = zipLocation;
+          try {
+            const result = await resourceService.lookup(zipLocation);
+            locationContext = { ...locationContext, placeLabel: zipLocation.label, localListing: (body.answers.need === 'A place to stay' ? result.pins.find(pin => pin.kind === 'shelter') : null) || result.pins.find(pin => pin.kind === 'center') || null };
+          } catch { /* The curated federal plan remains available. */ }
+        }
+      }
+      let completedActionIds;
+      try { completedActionIds = hasPlan ? recovery.normalizeCompleted(body.answers.need, body.completedActionIds, locationContext) : (Array.isArray(body.completedActionIds) && body.completedActionIds.length === 0 ? [] : body.completedActionIds === undefined ? [] : null); if (!completedActionIds) throw new Error(); }
+      catch { sendJson(res, 400, { error: 'Choose valid recovery actions.' }); return; }
+      const candidateActions = hasPlan ? recovery.getPlan(body.answers.need, language, locationContext) : [];
       if (!agentEndpoint && !apiUrl) { sendJson(res, 503, { error: 'Chat is not configured yet. Use the official referrals on this page.', code: 'not_configured' }); return; }
       const history = body.messages.map(({ role, content }) => ({ role, content }));
       let householdContext = '';
-      if (body.useProfile === true && profileStore) {
+      if (hasPlan && body.useProfile === true && profileStore) {
         try {
           const { owner: token } = identity(req);
           const profile = token ? profileStore.get(token) : null;
           // Explicit allowlist: saved health, disability, access and support answers never enter the AI payload.
-          if (profile) householdContext = ` Saved household context (unverified and possibly outdated): ${JSON.stringify({ homeLocality: profile.homeLocality, householdSize: profile.householdSize })}. Home locality is distinct from current and damage locality; confirm before using it.`;
+          if (profile) householdContext = ` Saved household context (unverified and possibly outdated): ${JSON.stringify({ homeZip: profile.homeZip || null, householdSize: profile.householdSize })}. Home ZIP is distinct from current and damage ZIP; confirm before using it.`;
         } catch { sendJson(res, 503, { error: 'Saved household context is unavailable. Turn off profile use to continue.' }); return; }
       }
-      const context = `Preferred reply language: ${language === 'es' ? 'Spanish' : 'English'}. Questionnaire answers (unverified user data): immediate danger: no; current Virginia locality: ${body.answers.locality ?? 'not provided'}; help requested: ${body.answers.need}.` + householdContext;
+      const currentArea = body.answers.currentZip ? `${body.answers.currentZip}${validatedArea ? ` (${validatedArea.label}; approximate GeoNames area)` : ' (area unresolved; do not infer a place)'}` : body.answers.locality ?? 'not provided';
+      const context = `Preferred reply language: ${languageCopy.languages[language].name}. Questionnaire answers (unverified user data): immediate danger: ${body.answers.danger ?? 'not answered'}; current ZIP area: ${currentArea}; disaster type: ${body.answers.disasterType ?? 'not provided'}; help requested: ${body.answers.need ?? 'not provided'}.` + householdContext
+        + ` Approved recovery actions supplied by HERO: ${JSON.stringify(candidateActions)}. Resident-reported completed action IDs (not confirmation of agency activity): ${JSON.stringify(completedActionIds)}.`
+        + (hasPlan ? '' : ' No completed survey or recovery plan is available. Give general disaster guidance only, ask at most one useful nonsensitive follow-up question, do not assume a location or local resource, and return an empty actionIds array.');
       try {
         const useAgent = Boolean(agentEndpoint);
         const headers = { 'Content-Type': 'application/json' };
@@ -398,9 +460,10 @@ export function createAppServer({ env = process.env, fetchImpl = fetch, profileS
           sendJson(res, 502, { error: message, code: [401,403].includes(response.status) ? 'access_denied' : response.status === 429 ? 'provider_busy' : 'provider_unavailable' }); return;
         }
         const result = await response.json();
-        const reply = useAgent ? foundryResponseText(result) : result?.choices?.[0]?.message?.content;
-        if (!allowedReply(reply)) { sendJson(res, 502, { error: 'Chat did not return an answer. Use the official referrals on this page.' }); return; }
-        sendJson(res, 200, { reply: reply.trim() });
+        const raw = useAgent ? foundryResponseText(result) : result?.choices?.[0]?.message?.content;
+        const resultReply = parseActionReply(raw, candidateActions.map(action => action.id));
+        if (!resultReply) { sendJson(res, 502, { error: 'AI returned an unverified answer. Your recovery plan is still available.', code: 'invalid_output' }); return; }
+        sendJson(res, 200, { ...resultReply, mode: 'ai' });
       } catch (error) {
         sendJson(res, 502, { error: 'AI assistance is unavailable right now. Use the official resources or speak with a representative.', code: ['AZURE_CLI_MISSING', 'AZURE_CLI_AUTH'].includes(error.code) ? 'auth_required' : error.name === 'TimeoutError' ? 'timeout' : 'provider_unavailable' });
       }
@@ -418,6 +481,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const profileStore = openProfileDatabase(directory);
   const accountStore = openAccountDatabase(directory);
   const server = createAppServer({ profileStore, accountStore });
-  server.listen(port, host, () => console.log(`Virginia Flood Guide running at http://${host}:${port}`));
+  server.listen(port, host, () => console.log(`HERO running at http://${host}:${port}`));
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => server.close(() => { profileStore.close(); accountStore.close(); process.exit(0); }));
 }

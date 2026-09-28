@@ -1,8 +1,10 @@
-# Microsoft Hackathon — Virginia Flood Guide
+# Microsoft Hackathon — Original Virginia-scope brief
+
+This brief records the original project direction. HERO's current nationwide ZIP and map implementation is documented in [README.md](README.md).
 
 ## Goal
 
-Build an AI disaster assistance navigator for Virginia residents preparing for or affected by flooding. Help people find relevant assistance by location, circumstances, and immediate needs, using authoritative government information and plain language. Keep the experience accessible and mobile friendly. Minimize collection of sensitive information and route urgent, sensitive, ambiguous, or high-impact cases to a human representative.
+Build an AI disaster assistance navigator for Virginia residents preparing for or affected by disasters. Help people find relevant assistance by location, circumstances, and immediate needs, using authoritative government information and plain language. Keep the experience accessible and mobile friendly. Minimize collection of sensitive information and route urgent, sensitive, ambiguous, or high-impact cases to a human representative.
 
 ## Prior conversation
 
@@ -12,13 +14,13 @@ The existing Virginia Flood Guide Site was reported as live in the prior convers
 
 ## Product decisions
 
-- Focus on flooding in Virginia.
+- Cover disasters generally in Virginia, including hurricanes, floods, wildfires and severe storms.
 - Use Virginia county or independent city for location questions. A ZIP code may suggest a locality, but the resident must confirm it.
 - Keep home locality, current locality, and damage locality distinct.
 - Use DisasterAssistance.gov for assistance and application referrals, and the FEMA Disaster Recovery Center locator for nearby help.
 - Use OpenFEMA declarations to provide context for the damage locality. A declaration does not establish individual eligibility or confirm applications are open. Display the last successful check time and `status unknown` if data is stale or unavailable.
 - Keep the fraud feature out of the plan, per the user's prior request.
-- Do not invent current local conditions or Virginia-specific evacuation instructions. The supplied source list lacks an official Virginia source for alerts, evacuation, and detailed flood safety guidance. The prior conversation left open whether one may be added.
+- Do not invent current local conditions or Virginia-specific evacuation instructions. The supplied source list lacks an official Virginia source for alerts, evacuation, and detailed hazard safety guidance. The prior conversation left open whether one may be added.
 
 ## Supplied sources
 
@@ -51,6 +53,10 @@ The local Node website in this repository now implements F1–F9 with optional a
 - F6: curated personal preparedness checklist, encrypted task progress, print/save as PDF and text export. Tasks adapt to explicitly selected household needs; no AI request is needed.
 - F7: optional OpenFEMA declaration lookup for an explicitly selected damage locality, exact county/city code matching, dated source-linked records and unknown/stale fallback.
 - F8: bundled English/Spanish interface and checklist exports, keyboard/screen-reader improvements, compressed/revalidated assets, public-only offline guide and explicit retry/connection feedback. Human language and assistive-technology acceptance review remains a release check.
-- F9: bounded conversational AI through the configured hosted Foundry agent or direct Azure deployment, selected-language instructions, official reply links, local emergency guard, retry/clear controls and operator connection check. All 39 automated tests pass. Real English and Spanish replies were verified through the configured Foundry agent; version 2 contains the safety/language policy and no external tools.
+- F9: bounded conversational AI through the configured hosted Foundry agent or direct Azure deployment, selected-language instructions, official reply links, local emergency guard, retry/clear controls and operator connection check. All 44 automated tests pass. Real English and Spanish replies were verified through the configured Foundry agent; version 6 contains the safety/language policy and no external tools.
 
 User preference: SQLite stays local. Saved health, disability, access, and support answers must not be sent to AI. Only home locality and household size may enter optional saved AI context. See FLOOD_GUIDE_README.md for setup and limitations.
+
+- Recovery release: deterministic bilingual actions, owner-aware tab progress, reviewed local helper summaries, structured AI action references and outcome-based status. See README.md and docs/VERIFICATION.md for measured evidence and remaining release checks.
+
+Product scope updated September 27, 2026 at the user’s request: HERO covers disasters generally. Preparedness tasks use existing general Ready.gov planning sources. Recovery still routes by need and locality rather than assuming a hazard.

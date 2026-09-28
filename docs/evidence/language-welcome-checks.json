@@ -1,0 +1,64 @@
+{
+  "arabicChoice": {
+    "dialogOpen": false,
+    "direction": "rtl",
+    "heading": "مساعدة بعد الكوارثفي فيرجينيا.",
+    "language": "ar"
+  },
+  "refresh": {
+    "dialogOpen": false,
+    "direction": "rtl",
+    "language": "ar",
+    "ready": true
+  },
+  "mobileWidth": 375,
+  "mobileMenuDirection": "ltr",
+  "mobileOverflow": false,
+  "keyboard": [
+    {
+      "inMenu": true,
+      "language": "es",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "ar",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "zh-Hans",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "ko",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "vi",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "tl",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": null,
+      "tag": "A"
+    },
+    {
+      "inMenu": true,
+      "language": "en",
+      "tag": "BUTTON"
+    },
+    {
+      "inMenu": true,
+      "language": "es",
+      "tag": "BUTTON"
+    }
+  ]
+}

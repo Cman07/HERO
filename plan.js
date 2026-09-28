@@ -1,14 +1,13 @@
 (() => {
-  const localities = window.VIRGINIA_LOCALITIES || [];
   const schema = window.floodProfileSchema;
   const search = document.getElementById('home-search');
-  const select = document.getElementById('home-locality');
   const status = document.getElementById('profile-status');
   const panels = [...document.querySelectorAll('.profile-panel')];
   let saved = null;
   let user = null;
   let loading = false;
-  let homeLocality = null;
+  let homeZip = null;
+  let legacyHomeLocality = null;
   let step = 0;
   let busy = false;
   let ready = false;
@@ -37,21 +36,21 @@
     document.getElementById(index < 3 ? 'household-questions' : 'support-questions').append(field);
   }
   function updateHomeSelection() {
-    document.getElementById('home-selection').textContent = homeLocality ? 'Selected home: ' + homeLocality : 'No home locality selected.';
+    document.getElementById('home-selection').textContent = homeZip ? 'Entered home ZIP: ' + homeZip : 'No home ZIP entered.';
+    const legacy = document.getElementById('legacy-home');
+    legacy.hidden = !legacyHomeLocality;
+    legacy.textContent = legacyHomeLocality ? 'Earlier saved Virginia locality (read only): ' + legacyHomeLocality + '. Enter a home ZIP to use location-based features.' : '';
   }
-  const homePicker = window.createLocalityPicker({
-    search, value: select, list: document.getElementById('home-locality-list'), count: document.getElementById('home-count'),
-    onChange: place => { homeLocality = place || null; updateHomeSelection(); }
-  });
-  function filter() { homePicker.setValue(homeLocality); updateHomeSelection(); }
+  search.addEventListener('input', () => { homeZip = search.value.trim() || null; updateHomeSelection(); });
+  function filter() { search.value = homeZip || ''; updateHomeSelection(); }
   function draft() {
-    const value = { homeLocality, householdSize: document.getElementById('household-size').value, completedTasks };
+    const value = { homeZip, legacyHomeLocality, householdSize: document.getElementById('household-size').value, completedTasks };
     for (const { key } of schema.profileQuestions) value[key] = document.querySelector(`input[name="${key}"]:checked`).value;
     return value;
   }
   function review() {
     const value = draft();
-    const entries = [['Home locality', value.homeLocality || 'Not provided'], ['Household size', value.householdSize === 'unspecified' ? 'Prefer not to say' : value.householdSize]];
+    const entries = [['Home ZIP', value.homeZip || 'Not provided'], ['Household size', value.householdSize === 'unspecified' ? 'Prefer not to say' : value.householdSize]];
     for (const { key, label } of schema.profileQuestions) entries.push([label, labels[value[key]]]);
     document.getElementById('profile-review').replaceChildren(...entries.flatMap(([label, answer]) => {
       const term = document.createElement('dt'); term.textContent = label;
@@ -105,7 +104,8 @@
   }
   function fill(profile) {
     document.getElementById('delete-confirm').hidden = true;
-    homeLocality = profile?.homeLocality || null;
+    homeZip = profile?.homeZip || null;
+    legacyHomeLocality = profile?.legacyHomeLocality || profile?.homeLocality || null;
     search.value = ''; filter();
     document.getElementById('household-size').value = profile?.householdSize || 'unspecified';
     for (const { key } of schema.profileQuestions) document.querySelector(`input[name="${key}"][value="${profile?.[key] || 'unspecified'}"]`).checked = true;
@@ -131,14 +131,14 @@
     if (!response.ok) throw new Error(data.error || 'Profile storage is unavailable.');
     return data;
   }
-  document.getElementById('clear-home').addEventListener('click', () => { homeLocality = null; search.value = ''; filter(); });
+  document.getElementById('clear-home').addEventListener('click', () => { homeZip = null; search.value = ''; filter(); });
   document.getElementById('profile-next').addEventListener('click', () => { report(''); navigate(step + 1); });
   document.getElementById('profile-back').addEventListener('click', () => { report(''); navigate(step - 1); });
   document.getElementById('profile-form').addEventListener('submit', async event => {
     event.preventDefault();
     if (step !== 3 || busy || !ready) return;
     let value;
-    try { value = schema.normalizeProfile(draft(), localities); }
+    try { value = schema.normalizeProfile(draft(), window.VIRGINIA_LOCALITIES || []); }
     catch (error) { report(error.message, true); return; }
     document.getElementById('return-home').hidden = true;
     setBusy(true); report('Saving your profile…');
@@ -213,6 +213,8 @@
       item.append(label, detail, source); return item;
     }));
     document.getElementById('checklist-export-text').value = window.heroAccess.translateExport(preparedness.checklistText(saved, completedTasks));
+    document.getElementById('checklist-export-text').lang = window.heroAccess.language;
+    document.getElementById('checklist-export-text').dir = window.heroLanguageCopy.languages[window.heroAccess.language].dir;
     if (focusedTask) document.querySelectorAll('#checklist-items input').forEach(input => { if (input.dataset.taskId === focusedTask) input.focus({ preventScroll: true }); });
   }
   document.getElementById('checklist-items').addEventListener('change', async event => {

@@ -33,3 +33,6 @@ profile.key
 *.log
 
 node_modules/
+
+# Generated local walkthrough; source, captions and screenshots are versionable.
+demo/*.mp4

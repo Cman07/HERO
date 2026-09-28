@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-09-27T15:33:24.174Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 1980,
+      "status": 200,
+      "valid": true,
+      "reply": "Next, confirm the county or independent city where your property damage occurred. This helps separate your current location from the damage location, which is important for eligibility and assistance specifics.",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1318,
+      "status": 200,
+      "valid": true,
+      "reply": "Ahora es importante confirmar en qué condado o ciudad independiente ocurrieron los daños a su propiedad. Esto ayuda a entender si su caso cumple con las declaraciones oficiales y qué tipo de asistencia puede estar disponible. ¿En cuál condado o ciudad independiente de Virginia sucedieron los daños?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

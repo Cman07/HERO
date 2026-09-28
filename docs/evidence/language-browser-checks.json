@@ -1,0 +1,65 @@
+[
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "检查是否有恢复中心可用",
+    "language": "zh-Hans",
+    "overflow": false,
+    "progress": "您已标记完成 1 个恢复措施，共 3 个。",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "복구 센터 이용 가능 여부 확인",
+    "language": "ko",
+    "overflow": false,
+    "progress": "귀하가 완료 표시한 복구 작업 3개 중 1개.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "Kiểm tra xem trung tâm hỗ trợ có sẵn không",
+    "language": "vi",
+    "overflow": false,
+    "progress": "Bạn đã đánh dấu hoàn thành 1 trong tổng số 3 hành động phục hồi.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "Suriin kung may available na recovery center",
+    "language": "tl",
+    "overflow": false,
+    "progress": "1 sa 3 na mga aksyon sa pagbangon ang minarkahan mo bilang kumpleto.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "Consulte si hay un centro de recuperación disponible",
+    "language": "es",
+    "overflow": false,
+    "progress": "1 de 3 acciones de recuperación marcadas como completadas por usted.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "ltr",
+    "firstStep": "Check whether a recovery center is available",
+    "language": "en",
+    "overflow": false,
+    "progress": "1 of 3 recovery actions marked complete by you.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  },
+  {
+    "checked": true,
+    "direction": "rtl",
+    "firstStep": "تحقق مما إذا كان مركز التعافي متاحًا",
+    "language": "ar",
+    "overflow": false,
+    "progress": "1 من 3 إجراءات التعافي وضع علامة إتمام عليها من قبلك.",
+    "reviewedDraft": "Fictional reviewed draft — KEEP MY WORDS <script>literal</script>"
+  }
+]

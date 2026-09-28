@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-09-28T02:27:08.060Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 3227,
+      "status": 200,
+      "valid": true,
+      "reply": "Next, confirm exactly where the property damage occurred, especially if it is different from your current location. This is important because assistance programs may require the damage location to be clearly identified. After that, gather all necessary documents privately, such as photos, receipts, and insurance information, based on the official checklist to prepare for your application. Would you like guidance on what specific information to prepare before applying?",
+      "actionIds": [
+        "damage-locality",
+        "damage-prepare"
+      ]
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1430,
+      "status": 200,
+      "valid": true,
+      "reply": "Ahora, confirme dónde ocurrieron los daños para asegurar que reporta la información correcta. Esto es importante porque su ubicación actual puede ser diferente del lugar donde ocurrió el daño a su propiedad. También, prepare preguntas sobre el siguiente paso para consultar en un Centro de Recuperación por Desastre si hay uno disponible en su área. ¿Puede decir si los daños ocurrieron en la misma ubicación que su código postal actual?",
+      "actionIds": [
+        "damage-locality",
+        "damage-questions"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

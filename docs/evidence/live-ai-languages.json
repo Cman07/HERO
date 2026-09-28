@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-09-27T16:21:15.284Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 2226,
+      "status": 200,
+      "valid": true,
+      "reply": "Next, please confirm the county or independent city where the property damage occurred. This helps keep the damage location separate from your current location in Fairfax city. Accurate damage locality information is important for determining available assistance and local disaster declarations. After confirming, you can prepare any necessary information privately to support your application.",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1183,
+      "status": 200,
+      "valid": true,
+      "reply": "Primero, confirme en qué condado o ciudad independiente ocurrieron los daños a su propiedad. Esto es importante para que las agencias determinen la elegibilidad y los recursos disponibles en esa área. ¿Podría indicarme dónde sucedió el daño?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "ar",
+      "elapsedMs": 1350,
+      "status": 200,
+      "valid": true,
+      "reply": "الخطوة التالية المهمة هي تأكيد مكان حدوث الضرر بالتحديد. تحديد موقع الضرر بدقة يساعد في معرفة الدعم المتاح والقوانين الخاصة بالمساعدة. هل يمكنك تأكيد اسم المقاطعة أو المدينة المستقلة التي حدث فيها الضرر؟",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "elapsedMs": 1226,
+      "status": 200,
+      "valid": true,
+      "reply": "请确认财产损坏具体发生在哪个弗吉尼亚县或独立市。这有助于确定您是否符合特定地区的灾害援助资格。您现在所在的Fairfax city可能与损坏地址不同，明确地点是下一步的重要环节。您能告诉我损坏发生的县或独立市名称吗？",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "ko",
+      "elapsedMs": 1375,
+      "status": 200,
+      "valid": true,
+      "reply": "재산 피해 발생 위치를 명확히 구분하는 것이 다음 단계입니다. 피해가 발생한 카운티나 독립시를 알려주세요. 그 정보는 피해 지역에 대한 FEMA 선언 여부 확인과 자격 평가에 도움이 됩니다. 피해 위치를 현재 거주지(예: Fairfax city)와 구분하는 것이 중요합니다. 피해 위치 정보를 알려주실 수 있나요?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "vi",
+      "elapsedMs": 1266,
+      "status": 200,
+      "valid": true,
+      "reply": "Bạn có thể xác nhận chính xác nơi xảy ra thiệt hại tài sản, vì nơi thiệt hại có thể khác với nơi bạn đang ở hiện tại ở Fairfax city. Việc này giúp đảm bảo thông tin hỗ trợ được chính xác và phù hợp với hoàn cảnh của bạn. Bạn có biết huyện hoặc thành phố độc lập nơi thiệt hại đã xảy ra không?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "tl",
+      "elapsedMs": 1390,
+      "status": 200,
+      "valid": true,
+      "reply": "Suriin kung saan nangyari ang pinsala sa iyong ari-arian upang matiyak na naiiba ito sa kasalukuyan mong lokasyon sa Fairfax city. Importante ito upang maayos ang proseso ng tulong. Maaari ka ring maghanda nang pribado ng mga dokumentong kakailanganin para sa aplikasyon, tulad ng ID, patunay ng ari-arian, at mga larawan ng pinsala. Mayroon ka bang alam na tiyak na lugar o county kung saan naganap ang pinsala?",
+      "actionIds": [
+        "damage-locality",
+        "damage-prepare"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

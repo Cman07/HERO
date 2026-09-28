@@ -10,6 +10,8 @@ const preparation = require('./preparedness.cjs');
 
 test('Spanish covers safety gates, profile questions, all preparedness tasks and canonical choices without changing values', () => {
   for (const text of ['Call 911', "I'm not sure", 'Are you in immediate danger or seriously injured?', 'Prefer not to say', 'Continue',
+    'Disaster assistance', 'Virginia Disaster Assistance Navigator', 'After a disaster', '← Back to HERO',
+    'For hurricanes, floods, wildfires, severe storms and other disasters.',
     ...profile.profileQuestions.map(q => q.label), ...preparation.getChecklist(Object.fromEntries(profile.profileQuestions.map(q => [q.key, 'yes']))).flatMap(t => [t.title, t.detail, t.source.name])]) {
     assert.ok(Object.hasOwn(spanish, text), text);
     assert.ok(spanish[text].length > 0);
@@ -32,7 +34,7 @@ test('Spanish checklist export preserves completion and every official source UR
   for (const task of preparation.getChecklist(null)) assert.ok(translated.includes(task.source.url));
 });
 
-test('public pages expose no-JavaScript resources and language settings, and emergency continue cannot bypass the gate', async () => {
+test('public pages expose no-JavaScript resources and language settings, and emergency continue stays in the survey', async () => {
   for (const name of ['index.html', 'plan.html', 'account.html']) {
     const html = await readFile(new URL(name, import.meta.url), 'utf8');
     assert.match(html, /<noscript>[\s\S]*https:\/\/www.disasterassistance.gov\//);
@@ -41,9 +43,14 @@ test('public pages expose no-JavaScript resources and language settings, and eme
     assert.match(html, /<main tabindex="-1"/);
     assert.doesNotMatch(html, /rel="preload"/);
   }
-  const html = await readFile(new URL('index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('help.html', import.meta.url), 'utf8');
   const emergency = html.split('id="emergency-step"')[1].split('id="location-step"')[0];
-  assert.match(emergency, /data-restart/); assert.doesNotMatch(emergency, /data-back/);
+  assert.match(emergency, /class="step-actions emergency-actions"/);
+  assert.match(emergency, /data-emergency-continue/);
+  assert.doesNotMatch(emergency, /data-restart|data-back/);
+  assert.ok(html.indexOf('id="chat-panel"') < html.indexOf('id="help-questions"'));
+  assert.match(html, /id="chat-input"[^>]*><\/textarea>/);
+  assert.doesNotMatch(html, /id="chat-input"[^>]*disabled/);
 });
 
 test('offline cache contains only public shells; APIs, posts and third parties never enter it', async () => {
@@ -57,6 +64,7 @@ test('offline cache contains only public shells; APIs, posts and third parties n
   vm.runInContext(code, context);
   let install; handlers.install({ waitUntil: value => { install = value; } }); await install;
   assert.ok(cached.includes('/index.html')); assert.ok(cached.includes('/language.cjs'));
+  assert.ok(cached.includes('/recovery.cjs')); assert.ok(cached.includes('/recovery-ui.js'));
   assert.ok(cached.every(path => !/api|account|data|font|community/.test(path)));
   for (const [url, method] of [['https://hero.test/api/profile', 'GET'], ['https://hero.test/api/chat', 'POST'], ['https://outside.test/index.html', 'GET']]) {
     let intercepted = false;

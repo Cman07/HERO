@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-09-27T16:08:28.501Z",
+  "synthetic": true,
+  "householdProfileSent": false,
+  "cases": [
+    {
+      "language": "en",
+      "elapsedMs": 3128,
+      "status": 502,
+      "valid": false,
+      "error": "invalid_output"
+    },
+    {
+      "language": "es",
+      "elapsedMs": 1849,
+      "status": 200,
+      "valid": true,
+      "reply": "Por favor, confirme en qué condado o ciudad independiente ocurrieron los daños a su propiedad. Esto es importante para determinar la elegibilidad y la disponibilidad de ayuda específica para esa área. ¿Puede decirme este dato?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "ar",
+      "elapsedMs": 1270,
+      "status": 200,
+      "valid": true,
+      "reply": "الخطوة التالية هي تأكيد مكان حدوث الضرر. يمكنك تحديد المقاطعة أو المدينة المستقلة التي حدث فيها الضرر. هذا مهم لفهم إعلان الطوارئ المحلي والمساعدة المحتملة التي قد تكون متاحة. هل يمكنك أن تخبرني في أي مقاطعة أو مدينة مستقلة حدث الضرر؟",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "elapsedMs": 1278,
+      "status": 200,
+      "valid": true,
+      "reply": "下一步，请确认财产损坏发生的具体县或独立市。这有助于判断适用的援助声明，并确保您能获得正确的灾后帮助。请告诉我损坏发生在哪个县或独立市？",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "ko",
+      "elapsedMs": 1598,
+      "status": 200,
+      "valid": true,
+      "reply": "재산 피해가 발생한 카운티나 독립시를 알려주세요. 피해가 발생한 위치 확인은 지원 자격과 신청 방향을 결정하는 데 중요합니다. 피해 위치를 현재 거주지와 구분하여 정확히 파악하는 것이 좋습니다.",
+      "actionIds": [
+        "damage-locality"
+      ]
+    },
+    {
+      "language": "vi",
+      "elapsedMs": 1885,
+      "status": 502,
+      "valid": false,
+      "error": "invalid_output"
+    },
+    {
+      "language": "tl",
+      "elapsedMs": 1422,
+      "status": 200,
+      "valid": true,
+      "reply": "Suriin kung saan nangyari ang pinsala. Mahalagang malaman kung ang lugar ng pinsala ay naiiba sa iyong kasalukuyang lokasyon sa Fairfax city. Ito ay makakatulong sa pagproseso ng tulong at pag-alam kung saan dapat irehistro ang iyong aplikasyon. Maaari mo bang sabihin sa akin saang lalawigan o lungsod nangyari ang pinsala?",
+      "actionIds": [
+        "damage-locality"
+      ]
+    }
+  ],
+  "provider": "foundry"
+}

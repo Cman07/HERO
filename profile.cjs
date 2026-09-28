@@ -12,9 +12,12 @@ const profileQuestions = [
 const answerValues = ['unspecified', 'yes', 'no'];
 function normalizeProfile(value, localities) {
   if (!value) throw new Error('Profile answers are required.');
-  if (value.homeLocality !== null && !localities.includes(value.homeLocality)) throw new Error('Select a home locality from the list or skip it.');
+  const legacyHomeLocality = value.legacyHomeLocality ?? value.homeLocality ?? null;
+  if (legacyHomeLocality !== null && !localities.includes(legacyHomeLocality)) throw new Error('Saved legacy home locality is invalid.');
+  const homeZip = value.homeZip ?? null;
+  if (homeZip !== null && (typeof homeZip !== 'string' || !/^\d{5}$/.test(homeZip))) throw new Error('Enter a five-digit home ZIP or leave it blank.');
   if (!['unspecified', '1', '2', '3', '4', '5+'].includes(value.householdSize)) throw new Error('Select a household size.');
-  const result = { version: 2, homeLocality: value.homeLocality, householdSize: value.householdSize };
+  const result = { version: 3, homeZip, legacyHomeLocality, homeLocality: legacyHomeLocality, householdSize: value.householdSize };
   for (const { key } of profileQuestions) {
     if (!answerValues.includes(value[key])) throw new Error('Choose yes, no, or prefer not to say for each question.');
     result[key] = value[key];

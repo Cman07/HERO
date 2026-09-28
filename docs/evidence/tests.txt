@@ -1,0 +1,74 @@
+
+> test
+> node --test
+
+(node:53591) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ accounts and sessions persist, passwords are hashed, and signing in again restores the same profile owner (264.316708ms)
+✔ sessions expire after inactivity and credential validation rejects invalid input (41.635042ms)
+✔ Google identities use stable subjects, link explicitly, and cannot take over another profile (81.922542ms)
+✔ existing account schema migrates without changing credentials or profile owners (84.563125ms)
+(node:53592) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ all interface languages reach the provider with localized approved actions and canonical IDs (47.742292ms)
+✔ added-language urgent messages receive localized emergency guidance with zero provider calls (7.838959ms)
+✔ F9 validates fixed Azure agent/application endpoints and defensively reads Responses text (0.1855ms)
+✔ F9 hosted agent receives bounded canonical conversation, Spanish preference and only consented household context (3.310125ms)
+✔ F9 emergency statements are answered locally in both languages without authenticating or contacting AI (5.010709ms)
+✔ F9 accepts bounded long assistant history, rejects extra roles/languages and preserves same-origin checks (2.930709ms)
+✔ F9 rejects unapproved response links, overlong/empty output, failures and missing authentication without exposing provider details (4.309542ms)
+✔ all Virginia localities have unique official codes; counties and cities with the same name stay distinct (3.82675ms)
+✔ fetches only the selected county, deduplicates, bounds output and caches successful checks (25.246958ms)
+✔ failures and malformed/wrong-area records produce unknown, not a false no-match result (1.481ms)
+✔ expired cached records retain the last successful time while failure status is unknown, then recover (0.811458ms)
+✔ concurrent lookups share one FEMA request and results never mix localities (0.689958ms)
+✔ Spanish covers safety gates, profile questions, all preparedness tasks and canonical choices without changing values (2.608583ms)
+✔ Spanish checklist export preserves completion and every official source URL (2.217959ms)
+✔ public pages expose no-JavaScript resources and language settings, and emergency continue cannot bypass the gate (4.926209ms)
+✔ offline cache contains only public shells; APIs, posts and third parties never enter it (29.671ms)
+(node:53595) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ Google verification rejects bad signatures, audience, issuer, expiry, nonce and unverified email (58.549209ms)
+✔ every added language covers the resident journey and preserves export literals (20.982583ms)
+✔ language formatting leaves identifiers, resident content and places intact (1.62675ms)
+✔ clear urgent disclosures in added languages route to the emergency response (17.977291ms)
+✔ every page loads bundled language packs before translations and offers native labels (1.753542ms)
+✔ checklist includes shared preparation tasks and adds only explicitly selected household needs (1.409541ms)
+✔ old profiles default to empty progress; updates prune tasks that no longer apply (1.382125ms)
+✔ text export includes progress, complete source URLs and limits without raw personal answers (2.330458ms)
+(node:53598) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ validates profile choices and excludes arbitrary fields (1.114375ms)
+✔ SQLite profiles persist across reopen, stay isolated, are encrypted, and can be deleted (9.641792ms)
+✔ encrypted payload cannot be read with a different key (2.373042ms)
+(node:53599) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ each need has distinct ordered, bilingual actions with stable IDs and approved source provenance (3.353459ms)
+✔ progress is tied to a verified owner and matching intake and excludes private data (0.410875ms)
+✔ plan and helper exports preserve sources, completion, distinct locations and the chosen language (4.261959ms)
+✔ structured AI output rejects invented actions, extra fields, duplicate IDs, markup, URLs and excessive answers (13.898292ms)
+✔ chat derives candidate actions on the server, accepts only valid progress, excludes helper edits and preserves fallback errors (27.893ms)
+✔ every need shows both approved official destinations (0.914375ms)
+✔ in-person help leads with the Recovery Center locator (0.090708ms)
+✔ property damage guidance distinguishes the damage location (0.049667ms)
+(node:53601) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ keeps official resources available when chat is not configured (39.755458ms)
+✔ passes questionnaire context and chat to Azure without exposing the key in the response (14.734167ms)
+✔ does not send immediate-danger answers to the model (0.972625ms)
+✔ accepts only a selected Virginia county or independent city (3.326208ms)
+✔ profile endpoints isolate browsers, reject cross-origin writes, and exclude private fields from Azure (11.2265ms)
+✔ signed-in profiles are private, survive new sessions, and keep sensitive fields out of AI (178.278166ms)
+✔ moving a browser profile requires consent and never overwrites another account profile (45.040792ms)
+✔ Google sign-in and explicit linking preserve profiles and reject replay, wrong origin and conflicts (47.733166ms)
+✔ checklist progress is owner-scoped, preserves profile edits, prunes obsolete tasks, and stays out of AI (6.197708ms)
+✔ F7 checks only an explicit damage locality and rejects danger, free text and cross-origin requests (2.060792ms)
+✔ F8 serves compressed public assets, supports revalidation, and never compresses or caches private API data (5.024916ms)
+ℹ tests 50
+ℹ suites 0
+ℹ pass 50
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 533.096583

@@ -1,0 +1,38 @@
+[
+  {
+    "language": "ar",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "language": "zh-Hans",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "language": "ko",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "language": "vi",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "language": "tl",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  },
+  {
+    "language": "en",
+    "overflow": false,
+    "scrollWidth": 375,
+    "width": 375
+  }
+]
